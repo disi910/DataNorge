@@ -25,13 +25,19 @@ React + TypeScript + Vite · MapLibre GL · Tailwind + shadcn/ui · FastAPI (Pyt
 
 Local development only for now; production deploy deferred.
 
-## Local dev (once scaffolded)
+## Local dev
 
 ```bash
-docker compose up
-# api → http://localhost:8000
-# web → http://localhost:5173
+cp .env.example .env
+cd infra
+docker-compose up       # or `docker compose up` if you have the plugin
+# web → http://localhost:5174
+# api → http://localhost:8001/health
+# db  → localhost:5433 (Postgres + PostGIS)
 ```
+
+Ports are offset from the usual 5173/8000/5432 so this can coexist with other
+local projects.
 
 ## License
 
