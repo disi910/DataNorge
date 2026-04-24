@@ -1,0 +1,39 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+dist/
+*.egg-info/
+
+# Node
+node_modules/
+.next/
+.turbo/
+apps/web/dist/
+
+# Env / secrets
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# Data / snapshots (large, re-fetchable)
+infra/snapshots/
+db/data/
+*.dump
+
+# Claude Code worktree infrastructure (don't track)
+.claude/
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# Logs
+*.log
+logs/
