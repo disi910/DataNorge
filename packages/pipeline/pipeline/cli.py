@@ -25,6 +25,14 @@ def load_kommuner() -> None:
 
 
 @app.command()
+def scrape_nkom() -> None:
+    """Scrape Nkom registered data center operators list -> organizations."""
+    from pipeline.jobs.scrape_nkom import run
+
+    run()
+
+
+@app.command()
 def seed_top_sites() -> None:
     """Seed hand-curated top Norwegian data centers from db/seed/top_sites.json."""
     from pipeline.jobs.seed_top_sites import run
