@@ -24,5 +24,13 @@ def load_kommuner() -> None:
     run()
 
 
+@app.command()
+def seed_top_sites() -> None:
+    """Seed hand-curated top Norwegian data centers from db/seed/top_sites.json."""
+    from pipeline.jobs.seed_top_sites import run
+
+    run()
+
+
 if __name__ == "__main__":
     app()
