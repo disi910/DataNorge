@@ -6,6 +6,18 @@ Format: `### YYYY-MM-DD — short title` then bullets. Mark milestones with **M0
 
 ---
 
+### 2026-04-24 — M1 first real data on the map
+
+- All 357 Norwegian kommune polygons loaded from `robhop/fylker-og-kommuner` (CC BY 4.0, Kartverket-derived). Verified Kautokeino largest at 9707 km².
+- Pipeline package scaffolded as a Typer CLI: `pipeline ping`, `pipeline load-kommuner`, `pipeline seed-top-sites`.
+- API `/kommuner` and `/data-centers` now serve real GeoJSON from Postgres with spatial queries.
+- Web renders kommune polygons as a faint overlay + data center pins colored by status, sized by MW. Popup on click.
+- 15 hand-curated top sites seeded with MW estimates and source links (Green Mountain, Bulk, Microsoft, Google Skien, GreenScale Ertsmyra, Lefdal Mine, Digiplex/STACK, Basefarm). All idempotent.
+- Known gaps: MW figures are estimates (confidence 0.4–0.7); Nkom-registered operators not yet ingested; BRREG ownership chains not yet traversed; SSB electricity not loaded.
+- Commits: `bf14fb6` db mount · `e32e50b` kommune loader · `7ccf9ee` api endpoints · `7be3aa5` web map · `e12cbbd` seed.
+
+---
+
 ### 2026-04-24 — M0 scaffolding complete
 
 - Fresh git repo initialized at `/Users/didriksivertsen/DataNorge/`, pushed to https://github.com/disi910/DataNorge (branch `main`).
