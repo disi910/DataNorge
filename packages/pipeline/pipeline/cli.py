@@ -33,6 +33,14 @@ def scrape_nkom() -> None:
 
 
 @app.command()
+def enrich_brreg(force: bool = False) -> None:
+    """Enrich organizations with BRREG data (address, NACE, authoritative name)."""
+    from pipeline.jobs.enrich_brreg import run
+
+    run(force=force)
+
+
+@app.command()
 def seed_top_sites() -> None:
     """Seed hand-curated top Norwegian data centers from db/seed/top_sites.json."""
     from pipeline.jobs.seed_top_sites import run
