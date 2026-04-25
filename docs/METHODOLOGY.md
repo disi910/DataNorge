@@ -6,9 +6,20 @@
 
 Every data center on this site has figures attached: megawatts of power, kommune, ownership. **These numbers are not official.** Norway has no single authority that publishes a "how much power does each data center consume" dataset. We piece the picture together from public, verifiable sources, and we tell you how confident we are.
 
+## The macro picture (March 2026)
+
+Cited from Digitaliserings- og forvaltningsdepartementet, Nkom, NVE, SSB — collected in the Fri Fagbevegelse / LO Magasinet feature *"Datasentre i Norge kan nesten tredoble sitt strømforbruk"* (Erlend Tro Klette, 26 February 2026):
+
+- **104** data centers in operation (Nkom, 20 March 2026)
+- **2.1 TWh** consumed by Norwegian data centers in 2024 — **1.2 %** of national power production (Digdir / SSB)
+- **~6 TWh** projected by 2030 if all known/decided projects materialize (NVE) — nearly tripling
+- **~3 400 MW** of grid capacity already reserved by data centers, equal to **20–30 TWh/yr** at full uptake — between **roughly half and three-quarters** of all Norwegian household electricity consumption (40.9 TWh in 2024). The Ministry stresses that not all reserved capacity will be built.
+
+Our project's job is to make the **104 sites** locatable on a map so this debate can be informed by *where* the load lands, not just *how much*.
+
 ## How we collect data
 
-1. **Operator list**: bootstrapped from **Nkom's registry** (https://nkom.no/datasenter/oversikt) — 58 operators as of April 2026.
+1. **Operator list**: from the official **Nkom registry** (https://nkom.no/datasenter/oversikt). Authoritative count as of **20 March 2026**: **55 commercial operators**, **104 data centers in operation** (incl. captive/in-house sites). The 104 figure is the upper bound on what a complete map should show.
 2. **Company and ownership**: **Brønnøysundregistrene (BRREG)** open API. We follow ownership chains from the Norwegian operating entity to its ultimate parent when disclosed.
 3. **Locations**: geocoded via **Kartverket adressesøk**. Where an exact address isn't public, we use the kommune centroid and mark the point as approximate.
 4. **Power capacity (MW)**: from press releases, annual reports, NVE concession filings, and kommune planning documents. We use **Anthropic's Claude** (a large language model) to extract structured numbers from unstructured text — every extraction is reviewed against the source quote and saved for audit.

@@ -18,6 +18,7 @@ from sqlalchemy import text
 from pipeline.db import engine
 
 SEED_PATH = Path(__file__).resolve().parents[3].parent / "db" / "seed" / "top_sites.json"
+DEFAULT_FILENAME = "top_sites.json"
 
 
 def _upsert_org(conn, org: dict) -> str:
@@ -120,8 +121,8 @@ def _upsert_source(conn, url: str, title: str, source_type: str) -> str:
     return row
 
 
-def run() -> None:
-    path = _find_seed_file()
+def run(filename: str = DEFAULT_FILENAME) -> None:
+    path = _find_seed_file(filename)
     logger.info("Loading seed from {}", path)
     payload = json.loads(path.read_text())
     sites = payload["sites"]
@@ -223,16 +224,15 @@ def run() -> None:
     logger.success("Seed done. {} new data_centers inserted ({} total sites processed)", n_dc, len(sites))
 
 
-def _find_seed_file() -> Path:
-    # In-container path or host path
+def _find_seed_file(filename: str = DEFAULT_FILENAME) -> Path:
     for candidate in [
-        Path("/app/db/seed/top_sites.json"),
-        SEED_PATH,
-        Path.cwd() / "db" / "seed" / "top_sites.json",
+        Path("/app/db/seed") / filename,
+        SEED_PATH.parent / filename,
+        Path.cwd() / "db" / "seed" / filename,
     ]:
         if candidate.exists():
             return candidate
-    raise FileNotFoundError("top_sites.json not found")
+    raise FileNotFoundError(f"{filename} not found")
 
 
 if __name__ == "__main__":

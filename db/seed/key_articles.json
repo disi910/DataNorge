@@ -1,0 +1,32 @@
+{
+  "articles": [
+    {
+      "url": "https://frifagbevegelse.no/magasinet/datasentre-i-norge-kan-nesten-tredoble-sitt-stromforbruk-7.158.1140148.f00aae0a25",
+      "title": "Datasentre i Norge kan nesten tredoble sitt strømforbruk",
+      "domain": "frifagbevegelse.no",
+      "source_type": "press",
+      "published_at": "2026-02-26",
+      "author": "Erlend Tro Klette",
+      "key_facts": [
+        "104 data centers in operation in Norway as of 2026-03-20 (Nkom)",
+        "Norwegian data centers consumed 2.1 TWh in 2024, 1.2% of national power production",
+        "NVE projects 6 TWh by 2030 if known/decided projects realize",
+        "3,400 MW grid capacity reserved by data centers (20-30 TWh/yr at full uptake)",
+        "Reserved capacity ~ 50-75% of all Norwegian household electricity (40.9 TWh in 2024)",
+        "Increase from 2024 to 2030 (~3.9 TWh) ≈ household consumption of Bergen + Trondheim + Tromsø combined"
+      ]
+    },
+    {
+      "url": "https://nkom.no/datasenter/oversikt",
+      "title": "Liste over kommersielle datasenteroperatørar (2026-03-20)",
+      "domain": "nkom.no",
+      "source_type": "official-list",
+      "published_at": "2026-03-20",
+      "key_facts": [
+        "55 commercial data center operators registered under datasenterforskrift",
+        "104 data centers in total operation (incl. captive/internal sites)",
+        "8 operators flagged for cryptocurrency mining (>0% of consumption)"
+      ]
+    }
+  ]
+}

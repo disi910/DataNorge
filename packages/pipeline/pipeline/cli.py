@@ -26,8 +26,16 @@ def load_kommuner() -> None:
 
 @app.command()
 def scrape_nkom() -> None:
-    """Scrape Nkom registered data center operators list -> organizations."""
+    """[Deprecated] HTML scrape of Nkom list. Prefer load-nkom-operators."""
     from pipeline.jobs.scrape_nkom import run
+
+    run()
+
+
+@app.command()
+def load_nkom_operators() -> None:
+    """Load the authoritative Nkom operator list from the 2026-03-20 PDF."""
+    from pipeline.jobs.load_nkom_operators import run
 
     run()
 
@@ -52,6 +60,22 @@ def enrich_brreg(force: bool = False) -> None:
 def seed_top_sites() -> None:
     """Seed hand-curated top Norwegian data centers from db/seed/top_sites.json."""
     from pipeline.jobs.seed_top_sites import run
+
+    run()
+
+
+@app.command()
+def seed_research_sites() -> None:
+    """Seed Pass-1 research sites from db/seed/operator_sites_research.json."""
+    from pipeline.jobs.seed_top_sites import run
+
+    run("operator_sites_research.json")
+
+
+@app.command()
+def load_key_articles() -> None:
+    """Load curated key articles into the sources table."""
+    from pipeline.jobs.load_key_articles import run
 
     run()
 
