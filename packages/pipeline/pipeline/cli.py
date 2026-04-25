@@ -33,6 +33,14 @@ def scrape_nkom() -> None:
 
 
 @app.command()
+def load_ssb_electricity() -> None:
+    """Load SSB population + electricity per kommune (heat overlay inputs)."""
+    from pipeline.jobs.load_ssb_electricity import run
+
+    run()
+
+
+@app.command()
 def enrich_brreg(force: bool = False) -> None:
     """Enrich organizations with BRREG data (address, NACE, authoritative name)."""
     from pipeline.jobs.enrich_brreg import run
