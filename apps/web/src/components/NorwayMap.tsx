@@ -5,9 +5,17 @@ import { fetchDataCenters, fetchKommuner, type FC, type DataCenterProps, type Ko
 const NORWAY_CENTER: [number, number] = [15.0, 65.0];
 const INITIAL_ZOOM = 4.2;
 
-export function NorwayMap() {
+type Props = {
+  selectedId: string | null;
+  onSelect: (id: string) => void;
+};
+
+export function NorwayMap({ selectedId, onSelect }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
+  const dcDataRef = useRef<FC<DataCenterProps> | null>(null);
+  const onSelectRef = useRef(onSelect);
+  onSelectRef.current = onSelect;
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
@@ -17,16 +25,22 @@ export function NorwayMap() {
       container: containerRef.current,
       style: {
         version: 8,
-        glyphs: "https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf",
         sources: {
           osm: {
             type: "raster",
-            tiles: ["https://tile.openstreetmap.org/{z}/{x}/{y}.png"],
+            tiles: [
+              "https://a.tile.openstreetmap.org/{z}/{x}/{y}.png",
+              "https://b.tile.openstreetmap.org/{z}/{x}/{y}.png",
+              "https://c.tile.openstreetmap.org/{z}/{x}/{y}.png",
+            ],
             tileSize: 256,
             attribution: "© OpenStreetMap · Kartverket (kommuner, CC BY 4.0)",
           },
         },
-        layers: [{ id: "osm", type: "raster", source: "osm" }],
+        layers: [
+          { id: "bg", type: "background", paint: { "background-color": "#f7f5f0" } },
+          { id: "osm", type: "raster", source: "osm" },
+        ],
       },
       center: NORWAY_CENTER,
       zoom: INITIAL_ZOOM,
@@ -34,6 +48,8 @@ export function NorwayMap() {
 
     mapRef.current = map;
     map.addControl(new maplibregl.NavigationControl(), "top-right");
+    map.on("error", (e) => console.error("[maplibre error]", e));
+    console.log("[NorwayMap] map instance created", containerRef.current?.getBoundingClientRect());
 
     map.on("load", async () => {
       try {
@@ -41,8 +57,9 @@ export function NorwayMap() {
           fetchKommuner(),
           fetchDataCenters(),
         ]);
+        dcDataRef.current = dataCenters;
         addKommuner(map, kommuner);
-        addDataCenters(map, dataCenters);
+        addDataCenters(map, dataCenters, (id) => onSelectRef.current(id));
       } catch (e) {
         console.error("Failed to load map data", e);
       } finally {
@@ -56,9 +73,25 @@ export function NorwayMap() {
     };
   }, []);
 
+  useEffect(() => {
+    const map = mapRef.current;
+    const data = dcDataRef.current;
+    if (!map || !data || !loaded) return;
+    if (map.getLayer("data-centers-selected")) {
+      map.setFilter("data-centers-selected", ["==", ["get", "id"], selectedId ?? ""]);
+    }
+    if (selectedId) {
+      const feat = data.features.find((f) => f.properties.id === selectedId);
+      if (feat) {
+        const c = (feat.geometry as GeoJSON.Point).coordinates as [number, number];
+        map.flyTo({ center: c, zoom: Math.max(map.getZoom(), 6.5), duration: 600 });
+      }
+    }
+  }, [selectedId, loaded]);
+
   return (
     <>
-      <div ref={containerRef} className="absolute inset-0" />
+      <div ref={containerRef} style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, width: "100%", height: "100%" }} />
       {!loaded && (
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center font-mono text-xs uppercase tracking-widest text-ink/60">
           Laster kart…
@@ -93,7 +126,11 @@ function addKommuner(map: maplibregl.Map, data: FC<KommuneProps>) {
   });
 }
 
-function addDataCenters(map: maplibregl.Map, data: FC<DataCenterProps>) {
+function addDataCenters(
+  map: maplibregl.Map,
+  data: FC<DataCenterProps>,
+  onSelect: (id: string) => void,
+) {
   map.addSource("data-centers", { type: "geojson", data });
 
   map.addLayer({
@@ -104,7 +141,7 @@ function addDataCenters(map: maplibregl.Map, data: FC<DataCenterProps>) {
       "circle-radius": [
         "interpolate",
         ["linear"],
-        ["coalesce", ["get", "mw_current"], 5],
+        ["coalesce", ["get", "mw_current"], ["get", "mw_planned_max"], 5],
         0, 4,
         50, 10,
         200, 20,
@@ -130,10 +167,25 @@ function addDataCenters(map: maplibregl.Map, data: FC<DataCenterProps>) {
     if (!f) return;
     const p = f.properties as DataCenterProps;
     const coords = (f.geometry as GeoJSON.Point).coordinates as [number, number];
-    new maplibregl.Popup({ closeButton: true, offset: 12 })
-      .setLngLat(coords)
-      .setHTML(popupHtml(p))
-      .addTo(map);
+    onSelect(p.id);
+    map.flyTo({ center: coords, zoom: Math.max(map.getZoom(), 6.5), duration: 600 });
+  });
+
+  map.addLayer({
+    id: "data-centers-selected",
+    type: "circle",
+    source: "data-centers",
+    filter: ["==", ["get", "id"], ""],
+    paint: {
+      "circle-radius": [
+        "interpolate", ["linear"],
+        ["coalesce", ["get", "mw_current"], ["get", "mw_planned_max"], 5],
+        0, 8, 50, 14, 200, 26, 500, 38,
+      ],
+      "circle-color": "transparent",
+      "circle-stroke-color": "#14181c",
+      "circle-stroke-width": 2.5,
+    },
   });
 
   map.on("mouseenter", "data-centers-circle", () => {
@@ -144,23 +196,3 @@ function addDataCenters(map: maplibregl.Map, data: FC<DataCenterProps>) {
   });
 }
 
-function popupHtml(p: DataCenterProps): string {
-  const mw = p.mw_current ?? p.mw_planned_max;
-  const mwLabel = mw !== null ? `${mw} MW` : "ukjent kapasitet";
-  const kommune = p.kommune_name ?? "";
-  const owner = p.owner ? `${p.owner} (${p.owner_country ?? "?"})` : "";
-  return `
-    <div style="font-family:'IBM Plex Sans',system-ui;min-width:220px">
-      <div style="font-weight:600;font-size:14px">${escapeHtml(p.name)}</div>
-      <div style="color:#666;font-size:12px;margin-top:2px">${escapeHtml(kommune)}</div>
-      <div style="font-family:'IBM Plex Mono',monospace;font-size:16px;margin-top:8px">${mwLabel}</div>
-      ${owner ? `<div style="color:#666;font-size:12px;margin-top:4px">Eier: ${escapeHtml(owner)}</div>` : ""}
-    </div>
-  `;
-}
-
-function escapeHtml(s: string): string {
-  return s.replace(/[&<>"']/g, (c) =>
-    ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!
-  );
-}

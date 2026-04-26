@@ -1,7 +1,11 @@
+import { useState } from "react";
 import { NorwayMap } from "./components/NorwayMap";
 import { DataCenterList } from "./components/DataCenterList";
+import { DataCenterDetail } from "./components/DataCenterDetail";
 
 export default function App() {
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+
   return (
     <div className="flex h-full w-full flex-col">
       <header className="flex items-baseline justify-between border-b border-ink/10 px-6 py-4">
@@ -19,12 +23,15 @@ export default function App() {
         </nav>
       </header>
 
-      <main className="grid flex-1 grid-cols-1 lg:grid-cols-[minmax(360px,40%)_1fr]">
-        <section className="overflow-y-auto border-r border-ink/10">
-          <DataCenterList />
+      <main className="flex min-h-0 flex-1 flex-col lg:flex-row">
+        <section className="overflow-y-auto border-b border-ink/10 lg:w-[40%] lg:min-w-[360px] lg:border-b-0 lg:border-r">
+          <DataCenterList selectedId={selectedId} onSelect={setSelectedId} />
         </section>
-        <section className="relative">
-          <NorwayMap />
+        <section className="relative flex-1" style={{ minHeight: 400 }}>
+          <NorwayMap selectedId={selectedId} onSelect={setSelectedId} />
+          {selectedId && (
+            <DataCenterDetail id={selectedId} onClose={() => setSelectedId(null)} />
+          )}
         </section>
       </main>
     </div>

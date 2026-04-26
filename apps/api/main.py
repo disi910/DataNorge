@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
 
@@ -131,3 +131,113 @@ def list_data_centers() -> dict:
             }
         )
     return {"type": "FeatureCollection", "features": features}
+
+
+@app.get("/data-centers/{dc_id}")
+def get_data_center(dc_id: str) -> dict:
+    """Return one data center with full detail: ownership, sources, kommune ratio."""
+    dc_sql = text(
+        """
+        SELECT
+            dc.id::text AS id,
+            dc.name,
+            dc.status,
+            dc.address,
+            dc.notes,
+            dc.first_seen,
+            dc.last_verified,
+            dc.kommune_code,
+            k.name AS kommune_name,
+            k.total_electricity_gwh_year AS kommune_gwh,
+            ST_X(dc.location) AS lng,
+            ST_Y(dc.location) AS lat,
+            op.id::text AS operator_id,
+            op.name AS operator_name,
+            op.brreg_org_nr AS operator_brreg,
+            op.country AS operator_country,
+            op.registered_address AS operator_address,
+            own.id::text AS owner_id,
+            own.name AS owner_name,
+            own.country AS owner_country,
+            own.brreg_org_nr AS owner_brreg
+        FROM data_centers dc
+        LEFT JOIN kommuner k ON k.code = dc.kommune_code
+        LEFT JOIN organizations op ON op.id = dc.operator_org_id
+        LEFT JOIN organizations own ON own.id = dc.owner_ultimate_org_id
+        WHERE dc.id = :id
+        """
+    )
+    obs_sql = text(
+        """
+        SELECT
+            co.mw_current, co.mw_planned_max, co.confidence,
+            co.observed_at, co.extracted_by,
+            s.url AS source_url, s.title AS source_title,
+            s.domain AS source_domain, s.source_type
+        FROM capacity_observations co
+        JOIN sources s ON s.id = co.source_id
+        WHERE co.data_center_id = :id
+        ORDER BY co.observed_at DESC
+        """
+    )
+    with SessionLocal() as s:
+        row = s.execute(dc_sql, {"id": dc_id}).mappings().first()
+        if not row:
+            raise HTTPException(status_code=404, detail="data center not found")
+        obs = s.execute(obs_sql, {"id": dc_id}).mappings().all()
+
+    capacity = [
+        {
+            "mw_current": float(o["mw_current"]) if o["mw_current"] is not None else None,
+            "mw_planned_max": float(o["mw_planned_max"]) if o["mw_planned_max"] is not None else None,
+            "confidence": float(o["confidence"]),
+            "observed_at": o["observed_at"].isoformat() if o["observed_at"] else None,
+            "extracted_by": o["extracted_by"],
+            "source": {
+                "url": o["source_url"],
+                "title": o["source_title"],
+                "domain": o["source_domain"],
+                "source_type": o["source_type"],
+            },
+        }
+        for o in obs
+    ]
+
+    latest = capacity[0] if capacity else None
+    mw = (latest or {}).get("mw_current") or (latest or {}).get("mw_planned_max")
+    kommune_gwh = float(row["kommune_gwh"]) if row["kommune_gwh"] is not None else None
+    kommune_share_pct = None
+    if mw is not None and kommune_gwh and kommune_gwh > 0:
+        kommune_share_pct = (mw * 8760.0) / (kommune_gwh * 1000.0) * 100.0
+
+    return {
+        "id": row["id"],
+        "name": row["name"],
+        "status": row["status"],
+        "address": row["address"],
+        "notes": row["notes"],
+        "first_seen": row["first_seen"].isoformat() if row["first_seen"] else None,
+        "last_verified": row["last_verified"].isoformat() if row["last_verified"] else None,
+        "location": {"lng": row["lng"], "lat": row["lat"]},
+        "kommune": {
+            "code": row["kommune_code"],
+            "name": row["kommune_name"],
+            "total_electricity_gwh_year": kommune_gwh,
+        },
+        "operator": {
+            "id": row["operator_id"],
+            "name": row["operator_name"],
+            "brreg_org_nr": row["operator_brreg"],
+            "country": row["operator_country"],
+            "address": row["operator_address"],
+        } if row["operator_id"] else None,
+        "owner": {
+            "id": row["owner_id"],
+            "name": row["owner_name"],
+            "country": row["owner_country"],
+            "brreg_org_nr": row["owner_brreg"],
+        } if row["owner_id"] else None,
+        "latest_capacity": latest,
+        "capacity_history": capacity,
+        "kommune_share_pct_upper_bound": kommune_share_pct,
+    }
