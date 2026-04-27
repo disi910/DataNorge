@@ -7,7 +7,7 @@ export function MethodPage() {
           Hvordan vi <span className="italic text-blue">regner</span>.
         </h2>
         <p className="h-serif" style={{ fontSize: 15, lineHeight: 1.6 }}>
-          Hver MW-verdi har en <span className="font-medium">konfidens­score (0,0–1,0)</span>. Tallene aggregeres ikke uten kilde. For kommune­andelen viser vi en <span className="font-medium">båndindikator</span> for 40–70 % utnyttelse — det er den realistiske driftsandelen, ikke 100 %.
+          Hver MW-verdi har en <span className="font-medium">konfidens­score (0,0–1,0)</span>. Tallene aggregeres ikke uten kilde. For kommune­andelen viser vi en <span className="font-medium">båndindikator</span> for 40–70 % utnyttelse - det er den realistiske driftsandelen, ikke 100 %.
         </p>
         <div
           className="grid"

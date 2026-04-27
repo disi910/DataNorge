@@ -146,7 +146,7 @@ export function MapLegendOverlay() {
         <span>
           <svg width="22" height="14"><circle cx="11" cy="7" r="6" fill="#1d49c7" fillOpacity="0.18" stroke="#1d49c7" strokeWidth="1"/><circle cx="11" cy="7" r="1.6" fill="#0e1a2b"/></svg>
         </span>
-        <span className="h-sans" style={{ fontSize: 10.5 }}>I drift — areal = MW</span>
+        <span className="h-sans" style={{ fontSize: 10.5 }}>I drift - areal = MW</span>
         <span>
           <svg width="22" height="14"><circle cx="11" cy="7" r="6" fill="none" stroke="#1d49c7" strokeWidth="0.9" strokeDasharray="2 2"/><circle cx="11" cy="7" r="1.4" fill="#1d49c7"/></svg>
         </span>

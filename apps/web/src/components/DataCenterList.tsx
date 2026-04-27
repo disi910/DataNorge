@@ -67,7 +67,7 @@ export function DataCenterList({ selectedId, onSelect, onHover, onItemsLoaded }:
   return (
     <div>
       <div className="h-mono uppercase border-b border-ink mb-1.5 pb-1.5" style={{ fontSize: 10, letterSpacing: "0.22em" }}>
-        Tabell I — Anlegg, sortert ↓
+        Tabell I - Anlegg, sortert ↓
       </div>
 
       <div className="flex flex-col gap-2.5 py-2.5 border-t border-ink" style={{ borderBottom: "1px solid rgba(14,26,43,0.2)" }}>
@@ -165,7 +165,7 @@ function SiteRow({
           )}
         </div>
         <div className="h-mono text-muted" style={{ fontSize: 9.5, marginTop: 3, letterSpacing: "0.06em" }}>
-          {(s.kommune_name ?? "—").toUpperCase()}
+          {(s.kommune_name ?? "-").toUpperCase()}
           {s.operator && <> · {s.operator}</>}
           {s.owner && (
             <>
@@ -210,7 +210,7 @@ function SiteRow({
             <span className="h-mono text-blue" style={{ fontSize: 10, letterSpacing: "0.12em" }}>plan</span>
           </>
         ) : (
-          <span className="h-serif nums text-muted-2" style={{ fontSize: 22 }}>—</span>
+          <span className="h-serif nums text-muted-2" style={{ fontSize: 22 }}>-</span>
         )}
       </div>
     </div>

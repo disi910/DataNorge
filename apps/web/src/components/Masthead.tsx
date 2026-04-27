@@ -19,11 +19,11 @@ export function Masthead({ activeTab, setActiveTab, totalCount, longtailCount, p
           DATASENTER-NORGE · REGISTER 2026/04 · {totalCount - longtailCount} KARTLAGTE + {longtailCount} I HALELANGEN
         </div>
         <h1 className="h-serif" style={{ fontSize: 56, fontWeight: 400, margin: "10px 0 0", lineHeight: 0.98, letterSpacing: "-0.015em" }}>
-          Norges <span className="italic text-blue">{totalCount}</span> datasentre — <span className="italic">kartlagt</span>
+          Norges <span className="italic text-blue">{totalCount}</span> datasentre - <span className="italic">kartlagt</span>
         </h1>
         <p className="h-sans text-muted" style={{ fontSize: 13.5, marginTop: 12, maxWidth: 720, lineHeight: 1.5 }}>
           Hvem eier dem, hvor mye strøm de bruker, og hva som er reservert i nettkøen.
-          Et åpent register sammenstilt fra Nkom, NVE, Statnett, Brønnøysund og publikt offentliggjort selskapsmateriale —
+          Et åpent register sammenstilt fra Nkom, NVE, Statnett, Brønnøysund og publikt offentliggjort selskapsmateriale -
           oppdatert <span className="nums">25.04.2026</span>.
         </p>
       </div>

@@ -1,9 +1,9 @@
 const STATS = [
   { k: "104",   u: "sentre i drift",      foot: "Nkom-register, 20.03.2026" },
-  { k: "3 363", u: "MW reservert",        foot: "Statnett, des. 2025 — 36 % av all reservert last" },
+  { k: "3 363", u: "MW reservert",        foot: "Statnett, des. 2025 - 36 % av all reservert last" },
   { k: "2,1",   u: "TWh forbruk 2024",    foot: "SSB · ≈ 1,5 % av norsk produksjon" },
   { k: "~3,0",  u: "TWh estimat 2025",    foot: "NVE 1H-faktisk × 2 (1,4 TWh i H1)" },
-  { k: "6",     u: "TWh prognose 2030",   foot: "NVE LA25 — nær tredobling fra 2024" },
+  { k: "6",     u: "TWh prognose 2030",   foot: "NVE LA25 - nær tredobling fra 2024" },
   { k: ">50 %", u: "utenlandsk eierskap", foot: "E24-mapping, høst 2025 (26 av 49)" },
 ];
 

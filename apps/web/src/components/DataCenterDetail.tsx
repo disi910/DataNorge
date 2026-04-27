@@ -13,7 +13,7 @@ const SOURCE_TYPE_LABEL: Record<string, string> = {
 };
 
 function fmtMw(n: number | null | undefined): string {
-  if (n == null) return "—";
+  if (n == null) return "-";
   return Number.isInteger(n) ? `${n}` : n.toFixed(1);
 }
 
@@ -79,7 +79,7 @@ export function DetailCard({ id }: { id: string | null }) {
       </div>
 
       <div className="h-mono text-blue" style={{ fontSize: 9.5, letterSpacing: "0.2em" }}>
-        {(s.kommune.name ?? "—").toUpperCase()} · {isOper ? "I DRIFT" : s.status === "under_construction" ? "UNDER BYGGING" : "PLANLAGT"}
+        {(s.kommune.name ?? "-").toUpperCase()} · {isOper ? "I DRIFT" : s.status === "under_construction" ? "UNDER BYGGING" : "PLANLAGT"}
       </div>
       <div className="h-serif" style={{ fontSize: 22, fontWeight: 500, marginTop: 4, lineHeight: 1.1 }}>{s.name}</div>
       {s.address && (
@@ -96,13 +96,13 @@ export function DetailCard({ id }: { id: string | null }) {
             className="h-serif nums"
             style={{ fontSize: 30, fontWeight: 400, lineHeight: 1, color: isOper ? "#1d49c7" : "#8a8e98" }}
           >
-            {mw != null ? fmtMw(mw) : "—"}
+            {mw != null ? fmtMw(mw) : "-"}
           </div>
         </div>
         <div>
           <div className="h-mono text-muted" style={{ fontSize: 9, letterSpacing: "0.16em" }}>FULLT UTBYGD</div>
           <div className="h-serif nums" style={{ fontSize: 30, fontWeight: 400, lineHeight: 1 }}>
-            {planned != null ? fmtMw(planned) : "—"}
+            {planned != null ? fmtMw(planned) : "-"}
           </div>
         </div>
       </div>
@@ -204,7 +204,7 @@ export function DetailCard({ id }: { id: string | null }) {
       )}
 
       <div className="h-mono uppercase text-muted-2" style={{ fontSize: 9, letterSpacing: "0.16em", marginTop: 12 }}>
-        Sist verifisert {s.last_verified?.slice(0, 10) ?? "—"}
+        Sist verifisert {s.last_verified?.slice(0, 10) ?? "-"}
       </div>
     </div>
   );

@@ -8,6 +8,7 @@ import { MapLegendOverlay, MapTotalsOverlay, OwnershipBars, StatusTable } from "
 import { EditorialPage } from "./components/EditorialPage";
 import { MethodPage } from "./components/MethodPage";
 import { SourcesPage } from "./components/SourcesPage";
+import { MacroStrip } from "./components/MacroStrip";
 import type { DataCenterProps } from "./api";
 
 // TODO(map): Replace MapLibre raster map with a design-system illustrative
@@ -29,6 +30,7 @@ export default function App() {
   return (
     <div className="paper" style={{ minHeight: "100vh", padding: "36px 56px 28px" }}>
       <Masthead activeTab={tab} setActiveTab={setTab} totalCount={totalCount} longtailCount={longtailCount} plannedCount={plannedCount}/>
+      <MacroStrip/>
       <StatsRibbon/>
 
       {tab === "kart" && (
@@ -49,7 +51,7 @@ export default function App() {
               className="h-mono uppercase flex justify-between mb-1.5 pb-1.5"
               style={{ fontSize: 10, letterSpacing: "0.22em", borderBottom: "1px solid #0e1a2b" }}
             >
-              <span>Plate I — Geografisk fordeling, april 2026</span>
+              <span>Plate I - Geografisk fordeling, april 2026</span>
               <span className="text-muted">MapLibre · OSM · TODO redesign</span>
             </div>
             <div className="relative" style={{ border: "1px solid #0e1a2b", background: "#fbf8f1", padding: 4, height: 1100 }}>
@@ -61,7 +63,7 @@ export default function App() {
             </div>
             <div className="h-mono text-muted" style={{ fontSize: 9.5, marginTop: 8, letterSpacing: "0.05em", lineHeight: 1.5 }}>
               Sirkelareal (i designversjonen) proporsjonal med driftet eller planlagt MW. Den nåværende kartimplementasjonen
-              er en MapLibre-versjon — pixel-perfekt designversjon kommer.
+              er en MapLibre-versjon - pixel-perfekt designversjon kommer.
             </div>
           </div>
 

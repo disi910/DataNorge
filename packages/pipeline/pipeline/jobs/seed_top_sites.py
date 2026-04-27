@@ -121,22 +121,42 @@ def _upsert_source(conn, url: str, title: str, source_type: str) -> str:
     return row
 
 
-def run(filename: str = DEFAULT_FILENAME) -> None:
+def run(filename: str = DEFAULT_FILENAME, clean: bool = True) -> None:
     path = _find_seed_file(filename)
     logger.info("Loading seed from {}", path)
     payload = json.loads(path.read_text())
     sites = payload["sites"]
-    logger.info("{} sites in seed file", len(sites))
+    logger.info("{} sites in seed file (schema v{})", len(sites), payload.get("_schema_version", "?"))
 
     n_dc = 0
     with engine.begin() as conn:
+        if clean:
+            # Wipe prior manual-seed observations and any data_centers that no
+            # longer have observations attached. Keeps non-seed (extracted)
+            # data intact while letting us replace stale seed entries
+            # (Digiplex, Basefarm, etc.) with the current April 2026 inventory.
+            removed = conn.execute(
+                text(
+                    "DELETE FROM capacity_observations WHERE extracted_by = 'manual-seed' RETURNING id"
+                )
+            ).rowcount
+            orphaned = conn.execute(
+                text(
+                    """
+                    DELETE FROM data_centers
+                    WHERE id NOT IN (SELECT data_center_id FROM capacity_observations)
+                    RETURNING id
+                    """
+                )
+            ).rowcount
+            logger.info("clean: removed {} manual-seed observations and {} orphaned data_centers", removed, orphaned)
         for site in sites:
             operator_id = _upsert_org(conn, site["operator"])
             owner_id = _upsert_org(conn, site["owner_ultimate"])
             kommune_code = _resolve_kommune(conn, site["lng"], site["lat"])
             if not kommune_code:
                 logger.warning(
-                    "No kommune match for {} at ({}, {}) — site will load without kommune",
+                    "No kommune match for {} at ({}, {}); site will load without kommune",
                     site["name"], site["lat"], site["lng"],
                 )
 
