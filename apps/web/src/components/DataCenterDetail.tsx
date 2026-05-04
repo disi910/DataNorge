@@ -39,11 +39,10 @@ export function DetailCard({ id }: { id: string | null }) {
   if (!id) {
     return (
       <div
-        className="h-mono text-muted"
-        style={{ padding: 14, border: "1px dashed rgba(14,26,43,0.3)", fontSize: 11, letterSpacing: "0.08em", lineHeight: 1.5 }}
+        className="h-sans text-muted"
+        style={{ padding: 14, border: "1px dashed rgba(14,26,43,0.3)", fontSize: 12, lineHeight: 1.5 }}
       >
-        ↳ Velg et anlegg i listen eller kartet for å lese detaljer.<br/>
-        Hold musen over et punkt på kartet for å forhåndsvise.
+        Velg et anlegg i listen eller kartet for å se detaljer.
       </div>
     );
   }
@@ -71,38 +70,31 @@ export function DetailCard({ id }: { id: string | null }) {
 
   return (
     <div className="relative" style={{ padding: 14, border: "1px solid #0e1a2b", background: "#fbf8f1" }}>
-      <div
-        className="h-mono"
-        style={{ position: "absolute", top: -1, right: -1, padding: "3px 8px", background: "#0e1a2b", color: "#f1ece1", fontSize: 9, letterSpacing: "0.18em" }}
-      >
-        ENTRY · {s.id.slice(0, 12).toUpperCase()}
-      </div>
-
-      <div className="h-mono text-blue" style={{ fontSize: 9.5, letterSpacing: "0.2em" }}>
-        {(s.kommune.name ?? "-").toUpperCase()} · {isOper ? "I DRIFT" : s.status === "under_construction" ? "UNDER BYGGING" : "PLANLAGT"}
+      <div className="h-mono text-blue" style={{ fontSize: 9.5, letterSpacing: "0.18em" }}>
+        {isOper ? "I drift" : s.status === "under_construction" ? "Under bygging" : "Planlagt"}
       </div>
       <div className="h-serif" style={{ fontSize: 22, fontWeight: 500, marginTop: 4, lineHeight: 1.1 }}>{s.name}</div>
-      {s.address && (
-        <div className="h-serif italic text-muted" style={{ fontSize: 13, marginTop: 2 }}>{s.address}</div>
-      )}
+      <div className="h-serif italic text-muted" style={{ fontSize: 13, marginTop: 2 }}>
+        {s.kommune.name ?? "—"}{s.address && <> · {s.address}</>}
+      </div>
 
       <div
         className="grid"
         style={{ gridTemplateColumns: "1fr 1fr", gap: 10, marginTop: 12, paddingTop: 10, borderTop: "1px solid rgba(14,26,43,0.18)" }}
       >
         <div>
-          <div className="h-mono text-muted" style={{ fontSize: 9, letterSpacing: "0.16em" }}>I DRIFT (MW)</div>
+          <div className="h-sans text-muted" style={{ fontSize: 11 }}>I drift</div>
           <div
             className="h-serif nums"
-            style={{ fontSize: 30, fontWeight: 400, lineHeight: 1, color: isOper ? "#1d49c7" : "#8a8e98" }}
+            style={{ fontSize: 30, fontWeight: 400, lineHeight: 1, marginTop: 2, color: isOper ? "#1d49c7" : "#8a8e98" }}
           >
-            {mw != null ? fmtMw(mw) : "-"}
+            {mw != null ? fmtMw(mw) : "—"}<span className="h-mono text-muted" style={{ fontSize: 12, marginLeft: 4 }}>MW</span>
           </div>
         </div>
         <div>
-          <div className="h-mono text-muted" style={{ fontSize: 9, letterSpacing: "0.16em" }}>FULLT UTBYGD</div>
-          <div className="h-serif nums" style={{ fontSize: 30, fontWeight: 400, lineHeight: 1 }}>
-            {planned != null ? fmtMw(planned) : "-"}
+          <div className="h-sans text-muted" style={{ fontSize: 11 }}>Fullt utbygd</div>
+          <div className="h-serif nums" style={{ fontSize: 30, fontWeight: 400, lineHeight: 1, marginTop: 2 }}>
+            {planned != null ? fmtMw(planned) : "—"}<span className="h-mono text-muted" style={{ fontSize: 12, marginLeft: 4 }}>MW</span>
           </div>
         </div>
       </div>
@@ -111,38 +103,45 @@ export function DetailCard({ id }: { id: string | null }) {
         className="grid"
         style={{
           marginTop: 10, paddingTop: 10, borderTop: "1px solid rgba(14,26,43,0.18)",
-          gridTemplateColumns: "max-content 1fr", gap: "3px 12px",
+          gridTemplateColumns: "max-content 1fr", gap: "4px 12px",
         }}
       >
         {s.operator?.name && (
           <>
-            <span className="h-mono text-muted" style={{ fontSize: 9.5, letterSpacing: "0.14em" }}>OPERATØR</span>
-            <span className="h-sans" style={{ fontSize: 11.5 }}>{s.operator.name}</span>
+            <span className="h-sans text-muted" style={{ fontSize: 11 }}>Operatør</span>
+            <span className="h-sans" style={{ fontSize: 11.5 }}>
+              {s.operator.name}
+              {s.operator.country && s.operator.country !== "NO" && (
+                <span className="text-muted"> · {s.operator.country}</span>
+              )}
+            </span>
           </>
         )}
         {s.owner?.name && (
           <>
-            <span className="h-mono text-muted" style={{ fontSize: 9.5, letterSpacing: "0.14em" }}>EIER</span>
-            <span className="h-sans" style={{ fontSize: 11.5 }}>{s.owner.name}</span>
+            <span className="h-sans text-muted" style={{ fontSize: 11 }}>Eier</span>
+            <span className="h-sans" style={{ fontSize: 11.5 }}>
+              {s.owner.name}
+              {s.owner.country && s.owner.country !== "NO" && (
+                <span className="text-muted"> · {s.owner.country}</span>
+              )}
+            </span>
           </>
         )}
-        {(s.owner?.country || s.operator?.country) && (
+        {mw != null && (
           <>
-            <span className="h-mono text-muted" style={{ fontSize: 9.5, letterSpacing: "0.14em" }}>FLAGG</span>
-            <span className="h-sans" style={{ fontSize: 11.5 }}>{s.owner?.country ?? s.operator?.country}</span>
+            <span className="h-sans text-muted" style={{ fontSize: 11 }}>Snitt-last</span>
+            <span className="h-sans" style={{ fontSize: 11.5, color: "#2a3a52" }}>{util}</span>
           </>
         )}
-        <span className="h-mono text-muted" style={{ fontSize: 9.5, letterSpacing: "0.14em" }}>SNITT-LAST</span>
-        <span className="h-sans" style={{ fontSize: 11.5, color: "#2a3a52" }}>{util}</span>
-
         {cap && (
           <>
-            <span className="h-mono text-muted" style={{ fontSize: 9.5, letterSpacing: "0.14em" }}>KONFIDENS</span>
+            <span className="h-sans text-muted" style={{ fontSize: 11 }}>Konfidens</span>
             <span className="h-sans nums" style={{ fontSize: 11.5 }}>
-              c · {conf.toFixed(2)}
+              {conf.toFixed(2)}
               <span
                 className="inline-block align-middle relative"
-                style={{ marginLeft: 8, width: 60, height: 4, background: "rgba(14,26,43,0.12)" }}
+                style={{ marginLeft: 8, width: 56, height: 3, background: "rgba(14,26,43,0.12)" }}
               >
                 <span className="absolute" style={{ inset: 0, width: `${conf * 100}%`, background: "#1d49c7" }}/>
               </span>
@@ -177,9 +176,7 @@ export function DetailCard({ id }: { id: string | null }) {
 
       {s.capacity_history.length > 0 && (
         <div style={{ marginTop: 10, paddingTop: 10, borderTop: "1px solid rgba(14,26,43,0.18)" }}>
-          <div className="h-mono uppercase text-muted" style={{ fontSize: 9, letterSpacing: "0.18em", marginBottom: 6 }}>
-            Kilder
-          </div>
+          <div className="h-sans text-muted" style={{ fontSize: 11, marginBottom: 6 }}>Kilder</div>
           <ul className="flex flex-col gap-2">
             {s.capacity_history.slice(0, 4).map((obs, i) => (
               <li key={i} className="text-xs">
@@ -192,7 +189,7 @@ export function DetailCard({ id }: { id: string | null }) {
                 >
                   {obs.source.title ?? obs.source.url}
                 </a>
-                <div className="h-mono text-muted" style={{ fontSize: 9.5, letterSpacing: "0.06em", marginTop: 2 }}>
+                <div className="h-sans text-muted" style={{ fontSize: 11, marginTop: 2 }}>
                   {SOURCE_TYPE_LABEL[obs.source.source_type] ?? obs.source.source_type}
                   {obs.observed_at && <> · {obs.observed_at.slice(0, 10)}</>}
                   {obs.source.domain && <> · {obs.source.domain}</>}
@@ -203,8 +200,8 @@ export function DetailCard({ id }: { id: string | null }) {
         </div>
       )}
 
-      <div className="h-mono uppercase text-muted-2" style={{ fontSize: 9, letterSpacing: "0.16em", marginTop: 12 }}>
-        Sist verifisert {s.last_verified?.slice(0, 10) ?? "-"}
+      <div className="h-sans text-muted-2" style={{ fontSize: 11, marginTop: 12 }}>
+        Sist verifisert {s.last_verified?.slice(0, 10) ?? "—"}
       </div>
     </div>
   );

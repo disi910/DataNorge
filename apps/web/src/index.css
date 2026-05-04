@@ -22,18 +22,6 @@
 
   .paper {
     background-color: #f1ece1;
-    background-image:
-      radial-gradient(circle at 88% 8%, rgba(29,73,199,0.06) 0, transparent 32%),
-      radial-gradient(circle at 4% 96%, rgba(14,26,43,0.05) 0, transparent 36%);
-    position: relative;
-  }
-  .paper::after {
-    content: "";
-    position: absolute; inset: 0;
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence baseFrequency='1.1' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.045 0'/></filter><rect width='240' height='240' filter='url(%23n)'/></svg>");
-    pointer-events: none;
-    mix-blend-mode: multiply;
-    opacity: 0.5;
   }
 
   .chip {
