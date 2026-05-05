@@ -1,20 +1,6 @@
 import { useEffect, useState } from "react";
 import { fetchDataCenter, type DataCenterDetail as Detail } from "../api";
 
-const STATUS_LABEL: Record<Detail["status"], string> = {
-  operational: "I drift",
-  under_construction: "Under bygging",
-  planned: "Planlagt",
-  decommissioned: "Avviklet",
-};
-
-const STATUS_COLOR: Record<Detail["status"], string> = {
-  operational: "bg-teal-600 text-white",
-  under_construction: "bg-amber-500 text-ink",
-  planned: "bg-ink/40 text-white",
-  decommissioned: "bg-ink/30 text-white",
-};
-
 const SOURCE_TYPE_LABEL: Record<string, string> = {
   press: "Pressedekning",
   press_release: "Pressemelding",
@@ -27,28 +13,20 @@ const SOURCE_TYPE_LABEL: Record<string, string> = {
 };
 
 function fmtMw(n: number | null | undefined): string {
-  if (n == null) return "—";
+  if (n == null) return "-";
   return Number.isInteger(n) ? `${n}` : n.toFixed(1);
 }
 
-function ConfidenceBar({ value }: { value: number }) {
-  const pct = Math.round(value * 100);
-  const color = value >= 0.7 ? "bg-teal-600" : value >= 0.5 ? "bg-amber-500" : "bg-ink/40";
-  return (
-    <div className="flex items-center gap-2">
-      <div className="h-1.5 w-24 overflow-hidden rounded-full bg-ink/10">
-        <div className={`h-full ${color}`} style={{ width: `${pct}%` }} />
-      </div>
-      <span className="font-mono text-xs text-ink/60">{pct}%</span>
-    </div>
-  );
-}
-
-export function DataCenterDetail({ id, onClose }: { id: string; onClose: () => void }) {
+export function DetailCard({ id }: { id: string | null }) {
   const [data, setData] = useState<Detail | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (!id) {
+      setData(null);
+      setError(null);
+      return;
+    }
     let cancel = false;
     setData(null);
     setError(null);
@@ -58,189 +36,176 @@ export function DataCenterDetail({ id, onClose }: { id: string; onClose: () => v
     return () => { cancel = true; };
   }, [id]);
 
-  return (
-    <aside className="absolute right-0 top-0 z-10 flex h-full w-full max-w-[480px] flex-col overflow-y-auto border-l border-ink/10 bg-paper shadow-2xl">
-      <div className="sticky top-0 flex items-center justify-between border-b border-ink/10 bg-paper/95 px-6 py-4 backdrop-blur">
-        <span className="font-mono text-xs uppercase tracking-widest text-ink/50">Datasenter</span>
-        <button
-          onClick={onClose}
-          className="rounded p-1 text-ink/60 transition hover:bg-ink/5 hover:text-ink"
-          aria-label="Lukk"
-        >
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-            <path d="M5 5l10 10M15 5L5 15" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-          </svg>
-        </button>
-      </div>
-
-      {error && <div className="p-6 font-mono text-xs text-red-600">Feil: {error}</div>}
-      {!data && !error && (
-        <div className="p-6 font-mono text-xs uppercase tracking-widest text-ink/50">Laster…</div>
-      )}
-
-      {data && (
-        <div className="flex-1 px-6 py-6">
-          <div className="flex items-start justify-between gap-3">
-            <h2 className="text-2xl font-medium leading-tight">{data.name}</h2>
-            <span className={`shrink-0 rounded-full px-3 py-1 font-mono text-[10px] uppercase tracking-widest ${STATUS_COLOR[data.status]}`}>
-              {STATUS_LABEL[data.status]}
-            </span>
-          </div>
-          <div className="mt-1 font-mono text-xs text-ink/60">
-            {data.kommune.name ?? "Ukjent kommune"}
-            {data.address && <> · {data.address}</>}
-          </div>
-
-          <Capacity data={data} />
-
-          {data.kommune_share_pct_upper_bound != null && (
-            <KommuneShare pct={data.kommune_share_pct_upper_bound} kommune={data.kommune.name ?? "kommunen"} />
-          )}
-
-          <Section title="Eierskap">
-            <OrgRow label="Operatør" name={data.operator?.name} country={data.operator?.country} brreg={data.operator?.brreg_org_nr} />
-            <OrgRow label="Endelig eier" name={data.owner?.name} country={data.owner?.country} brreg={data.owner?.brreg_org_nr} />
-          </Section>
-
-          <Section title="Kilder">
-            {data.capacity_history.length === 0 ? (
-              <p className="text-sm text-ink/60">Ingen kapasitetsobservasjoner registrert.</p>
-            ) : (
-              <ul className="space-y-3">
-                {data.capacity_history.map((obs, i) => (
-                  <li key={i} className="rounded border border-ink/10 bg-white/40 p-3">
-                    <div className="flex items-baseline justify-between gap-3">
-                      <span className="font-mono text-[10px] uppercase tracking-widest text-ink/50">
-                        {SOURCE_TYPE_LABEL[obs.source.source_type] ?? obs.source.source_type}
-                      </span>
-                      <span className="font-mono text-xs text-ink/50">{obs.observed_at}</span>
-                    </div>
-                    <a
-                      href={obs.source.url}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="mt-1 block text-sm text-ink underline decoration-ink/20 underline-offset-2 hover:decoration-ink"
-                    >
-                      {obs.source.title ?? obs.source.url}
-                    </a>
-                    <div className="mt-1 font-mono text-xs text-ink/50">{obs.source.domain}</div>
-                    <div className="mt-2 flex items-center justify-between gap-3">
-                      <span className="font-mono text-xs text-ink/60">
-                        {obs.mw_current != null && `${fmtMw(obs.mw_current)} MW i drift`}
-                        {obs.mw_current != null && obs.mw_planned_max != null && " · "}
-                        {obs.mw_planned_max != null && `${fmtMw(obs.mw_planned_max)} MW planlagt`}
-                        {obs.mw_current == null && obs.mw_planned_max == null && "Ingen MW oppgitt"}
-                      </span>
-                      <ConfidenceBar value={obs.confidence} />
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </Section>
-
-          {data.notes && (
-            <Section title="Notater">
-              <p className="whitespace-pre-line text-sm leading-relaxed text-ink/80">{data.notes}</p>
-            </Section>
-          )}
-
-          <p className="mt-8 font-mono text-[10px] uppercase tracking-widest text-ink/40">
-            Sist verifisert {data.last_verified?.slice(0, 10) ?? "—"}
-          </p>
-        </div>
-      )}
-    </aside>
-  );
-}
-
-function Capacity({ data }: { data: Detail }) {
-  const cap = data.latest_capacity;
-  const current = cap?.mw_current;
-  const planned = cap?.mw_planned_max;
-  const hasNumbers = current != null || planned != null;
-
-  return (
-    <div className="mt-6 rounded-lg border border-ink/10 bg-white/40 p-5">
-      {hasNumbers ? (
-        <div className="flex items-baseline gap-6">
-          {current != null && (
-            <div>
-              <div className="font-mono text-[10px] uppercase tracking-widest text-ink/50">I drift</div>
-              <div className="mt-1 font-mono text-3xl tabular-nums">
-                {fmtMw(current)} <span className="text-base text-ink/60">MW</span>
-              </div>
-            </div>
-          )}
-          {planned != null && (
-            <div>
-              <div className="font-mono text-[10px] uppercase tracking-widest text-ink/50">Planlagt maks</div>
-              <div className="mt-1 font-mono text-3xl tabular-nums text-ink/70">
-                {fmtMw(planned)} <span className="text-base text-ink/50">MW</span>
-              </div>
-            </div>
-          )}
-        </div>
-      ) : (
-        <div className="font-mono text-sm text-ink/60">Effekt ikke offentlig oppgitt</div>
-      )}
-      {cap && (
-        <div className="mt-4 flex items-center gap-3">
-          <span className="font-mono text-[10px] uppercase tracking-widest text-ink/50">Konfidens</span>
-          <ConfidenceBar value={cap.confidence} />
-        </div>
-      )}
-    </div>
-  );
-}
-
-function KommuneShare({ pct, kommune }: { pct: number; kommune: string }) {
-  const display = pct >= 10 ? pct.toFixed(0) : pct.toFixed(1);
-  return (
-    <div className="mt-4 rounded-lg border border-amber-500/30 bg-amber-50/60 p-4">
-      <div className="font-mono text-[10px] uppercase tracking-widest text-amber-900/70">
-        Andel av kommunens strøm
-      </div>
-      <div className="mt-1 text-lg leading-snug">
-        Ved 100 % bruk ville dette utgjort{" "}
-        <span className="font-mono tabular-nums">{display} %</span>{" "}
-        av all elektrisitet brukt i {kommune}.
-      </div>
-      <div className="mt-2 text-xs text-ink/60">
-        Reell utnyttelse er typisk 40–70 %. Tallet er en øvre grense — se{" "}
-        <a href="/methodology" className="underline">metode</a>.
-      </div>
-    </div>
-  );
-}
-
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
-  return (
-    <section className="mt-6">
-      <h3 className="font-mono text-xs uppercase tracking-widest text-ink/50">{title}</h3>
-      <div className="mt-3">{children}</div>
-    </section>
-  );
-}
-
-function OrgRow({
-  label, name, country, brreg,
-}: { label: string; name?: string | null; country?: string | null; brreg?: string | null }) {
-  if (!name) return null;
-  const isForeign = country && country !== "NO";
-  return (
-    <div className="flex items-baseline justify-between border-b border-ink/5 py-2 last:border-b-0">
-      <div>
-        <div className="font-mono text-[10px] uppercase tracking-widest text-ink/50">{label}</div>
-        <div className="mt-0.5 text-sm font-medium">{name}</div>
-        {brreg && <div className="font-mono text-xs text-ink/50">org.nr {brreg}</div>}
-      </div>
-      <span
-        className={`font-mono text-xs ${isForeign ? "rounded bg-ink text-white px-2 py-0.5" : "text-ink/60"}`}
-        title={isForeign ? "Utenlandsk eier" : "Norsk"}
+  if (!id) {
+    return (
+      <div
+        className="h-sans text-muted"
+        style={{ padding: 14, border: "1px dashed rgba(14,26,43,0.3)", fontSize: 12, lineHeight: 1.5 }}
       >
-        {country ?? "?"}
-      </span>
+        Velg et anlegg i listen eller kartet for å se detaljer.
+      </div>
+    );
+  }
+
+  if (error) {
+    return <div className="p-3 h-mono text-xs text-red-700">Feil: {error}</div>;
+  }
+  if (!data) {
+    return (
+      <div className="text-muted" style={{ padding: 14, fontSize: 13, fontStyle: "italic" }}>
+        Laster…
+      </div>
+    );
+  }
+
+  const s = data;
+  const cap = s.latest_capacity;
+  const mw = cap?.mw_current ?? null;
+  const planned = cap?.mw_planned_max ?? null;
+  const isOper = s.status === "operational";
+  const utilLow = mw != null ? Math.round(mw * 0.4) : null;
+  const utilHigh = mw != null ? Math.round(mw * 0.7) : null;
+  const util = mw != null ? `${utilLow}–${utilHigh} MW snitt last (40–70 % utnyttelse)` : "ikke i drift";
+  const conf = cap?.confidence ?? 0;
+
+  return (
+    <div className="relative" style={{ padding: 14, border: "1px solid #0e1a2b", background: "#fbf8f1" }}>
+      <div className="text-blue" style={{ fontSize: 12, fontStyle: "italic" }}>
+        {isOper ? "I drift" : s.status === "under_construction" ? "Under bygging" : "Planlagt"}
+      </div>
+      <div className="h-serif" style={{ fontSize: 22, fontWeight: 500, marginTop: 4, lineHeight: 1.1 }}>{s.name}</div>
+      <div className="h-serif italic text-muted" style={{ fontSize: 13, marginTop: 2 }}>
+        {s.kommune.name ?? "—"}{s.address && <> · {s.address}</>}
+      </div>
+
+      <div
+        className="grid"
+        style={{ gridTemplateColumns: "1fr 1fr", gap: 10, marginTop: 12, paddingTop: 10, borderTop: "1px solid rgba(14,26,43,0.18)" }}
+      >
+        <div>
+          <div className="h-sans text-muted" style={{ fontSize: 11 }}>I drift</div>
+          <div
+            className="h-serif nums"
+            style={{ fontSize: 30, fontWeight: 400, lineHeight: 1, marginTop: 2, color: isOper ? "#1d49c7" : "#8a8e98" }}
+          >
+            {mw != null ? fmtMw(mw) : "—"}<span className="h-mono text-muted" style={{ fontSize: 12, marginLeft: 4 }}>MW</span>
+          </div>
+        </div>
+        <div>
+          <div className="h-sans text-muted" style={{ fontSize: 11 }}>Fullt utbygd</div>
+          <div className="h-serif nums" style={{ fontSize: 30, fontWeight: 400, lineHeight: 1, marginTop: 2 }}>
+            {planned != null ? fmtMw(planned) : "—"}<span className="h-mono text-muted" style={{ fontSize: 12, marginLeft: 4 }}>MW</span>
+          </div>
+        </div>
+      </div>
+
+      <div
+        className="grid"
+        style={{
+          marginTop: 10, paddingTop: 10, borderTop: "1px solid rgba(14,26,43,0.18)",
+          gridTemplateColumns: "max-content 1fr", gap: "4px 12px",
+        }}
+      >
+        {s.operator?.name && (
+          <>
+            <span className="h-sans text-muted" style={{ fontSize: 11 }}>Operatør</span>
+            <span className="h-sans" style={{ fontSize: 11.5 }}>
+              {s.operator.name}
+              {s.operator.country && s.operator.country !== "NO" && (
+                <span className="text-muted"> · {s.operator.country}</span>
+              )}
+            </span>
+          </>
+        )}
+        {s.owner?.name && (
+          <>
+            <span className="h-sans text-muted" style={{ fontSize: 11 }}>Eier</span>
+            <span className="h-sans" style={{ fontSize: 11.5 }}>
+              {s.owner.name}
+              {s.owner.country && s.owner.country !== "NO" && (
+                <span className="text-muted"> · {s.owner.country}</span>
+              )}
+            </span>
+          </>
+        )}
+        {mw != null && (
+          <>
+            <span className="h-sans text-muted" style={{ fontSize: 11 }}>Snitt-last</span>
+            <span className="h-sans" style={{ fontSize: 11.5, color: "#2a3a52" }}>{util}</span>
+          </>
+        )}
+        {cap && (
+          <>
+            <span className="h-sans text-muted" style={{ fontSize: 11 }}>Konfidens</span>
+            <span className="h-sans nums" style={{ fontSize: 11.5 }}>
+              {conf.toFixed(2)}
+              <span
+                className="inline-block align-middle relative"
+                style={{ marginLeft: 8, width: 56, height: 3, background: "rgba(14,26,43,0.12)" }}
+              >
+                <span className="absolute" style={{ inset: 0, width: `${conf * 100}%`, background: "#1d49c7" }}/>
+              </span>
+            </span>
+          </>
+        )}
+      </div>
+
+      {s.kommune_share_pct_upper_bound != null && (
+        <div
+          className="h-serif italic"
+          style={{ marginTop: 10, paddingTop: 10, borderTop: "1px solid rgba(14,26,43,0.18)", fontSize: 12.5, color: "#2a3a52", lineHeight: 1.45 }}
+        >
+          Ved 100 % bruk ville dette utgjort{" "}
+          <span className="nums not-italic font-medium text-blue">
+            {s.kommune_share_pct_upper_bound >= 10
+              ? s.kommune_share_pct_upper_bound.toFixed(0)
+              : s.kommune_share_pct_upper_bound.toFixed(1)} %
+          </span>{" "}
+          av all elektrisitet i {s.kommune.name ?? "kommunen"}. Reell utnyttelse 40–70 %.
+        </div>
+      )}
+
+      {s.notes && (
+        <div
+          className="h-serif italic"
+          style={{ marginTop: 10, paddingTop: 10, borderTop: "1px solid rgba(14,26,43,0.18)", fontSize: 12.5, color: "#2a3a52", lineHeight: 1.45 }}
+        >
+          {s.notes}
+        </div>
+      )}
+
+      {s.capacity_history.length > 0 && (
+        <div style={{ marginTop: 10, paddingTop: 10, borderTop: "1px solid rgba(14,26,43,0.18)" }}>
+          <div className="h-sans text-muted" style={{ fontSize: 11, marginBottom: 6 }}>Kilder</div>
+          <ul className="flex flex-col gap-2">
+            {s.capacity_history.slice(0, 4).map((obs, i) => (
+              <li key={i} className="text-xs">
+                <a
+                  href={obs.source.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="h-serif italic underline"
+                  style={{ color: "#0e1a2b", textDecorationColor: "rgba(14,26,43,0.3)" }}
+                >
+                  {obs.source.title ?? obs.source.url}
+                </a>
+                <div className="h-sans text-muted" style={{ fontSize: 11, marginTop: 2 }}>
+                  {SOURCE_TYPE_LABEL[obs.source.source_type] ?? obs.source.source_type}
+                  {obs.observed_at && <> · {obs.observed_at.slice(0, 10)}</>}
+                  {obs.source.domain && <> · {obs.source.domain}</>}
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      <div className="h-sans text-muted-2" style={{ fontSize: 11, marginTop: 12 }}>
+        Sist verifisert {s.last_verified?.slice(0, 10) ?? "—"}
+      </div>
     </div>
   );
 }
+
+// Backwards-compatible default-ish export name
+export { DetailCard as DataCenterDetail };

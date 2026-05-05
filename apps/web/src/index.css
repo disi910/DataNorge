@@ -7,6 +7,83 @@
     height: 100%;
   }
   body {
-    font-family: theme('fontFamily.sans');
+    font-family: 'Instrument Serif', serif;
+    color: #0e1a2b;
+    background: #d8d3c3;
+    -webkit-font-smoothing: antialiased;
   }
 }
+
+@layer components {
+  .h-serif { font-family: 'Instrument Serif', serif; }
+  .h-mono  { font-family: 'Instrument Serif', serif; }
+  .h-sans  { font-family: 'Instrument Serif', serif; }
+
+  .paper {
+    background-color: #f1ece1;
+  }
+
+  .chip {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 3px 9px; border: 1px solid #0e1a2b;
+    border-radius: 2px;
+    font-size: 11px;
+    color: #0e1a2b; background: transparent;
+    white-space: nowrap;
+  }
+  .chip.solid { background: #0e1a2b; color: #f1ece1; border-color: #0e1a2b; }
+  .chip.blue  { background: #1d49c7; color: #fff; border-color: #1d49c7; }
+  .chip.outline-blue { color: #1d49c7; border-color: #1d49c7; }
+
+  .navbtn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 6px 14px;
+    background: transparent;
+    border: 1px solid transparent;
+    color: #0e1a2b;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .navbtn:hover { color: #1d49c7; }
+  .navbtn.active { color: #1d49c7; border-bottom: 1px solid #1d49c7; border-radius: 0; }
+
+  .entry-row { transition: background 0.15s; cursor: pointer; }
+  .entry-row:hover { background: rgba(29,73,199,0.08); }
+  .entry-row.selected { background: rgba(29,73,199,0.08); }
+  .entry-row.selected .entry-bar { background: #1d49c7 !important; }
+  .entry-row.selected .entry-name { color: #1d49c7; }
+
+  .filter-tab {
+    padding: 4px 10px;
+    background: transparent;
+    border: 1px solid rgba(14,26,43,0.25);
+    color: #5b6478;
+    font-size: 12px;
+    cursor: pointer;
+    border-radius: 2px;
+  }
+  .filter-tab.on { background: #0e1a2b; color: #f1ece1; border-color: #0e1a2b; }
+
+  .blue-underline {
+    background-image: linear-gradient(180deg, transparent 70%, #1d49c7 70%, #1d49c7 78%, transparent 78%);
+    padding: 0 2px;
+  }
+
+  .nums { font-variant-numeric: tabular-nums; }
+
+  .searchbar {
+    width: 100%;
+    border: none;
+    border-bottom: 1px solid #0e1a2b;
+    background: transparent;
+    padding: 6px 0 6px 22px;
+    font-size: 13px;
+    color: #0e1a2b;
+    outline: none;
+  }
+  .searchbar::placeholder { color: #8a8e98; font-size: 13px; font-style: italic; }
+  .searchbar:focus { border-bottom-color: #1d49c7; }
+}
+
+::selection { background: #1d49c7; color: #fff; }

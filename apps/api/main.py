@@ -1,9 +1,28 @@
+import json
+from functools import lru_cache
+from pathlib import Path
+
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
 
 from apps.api.config import settings
 from apps.api.db import SessionLocal, ping
+
+
+_MACRO_FACTS_CANDIDATES = [
+    Path("/app/db/seed/macro_facts.json"),
+    Path(__file__).resolve().parents[2] / "db" / "seed" / "macro_facts.json",
+    Path.cwd() / "db" / "seed" / "macro_facts.json",
+]
+
+
+@lru_cache(maxsize=1)
+def _load_macro_facts() -> dict:
+    for candidate in _MACRO_FACTS_CANDIDATES:
+        if candidate.exists():
+            return json.loads(candidate.read_text())
+    raise FileNotFoundError("macro_facts.json not found in any known location")
 
 app = FastAPI(
     title="Datasenter-Norge API",
@@ -18,6 +37,12 @@ app.add_middleware(
     allow_methods=["GET"],
     allow_headers=["*"],
 )
+
+
+@app.get("/macro")
+def get_macro_facts() -> dict:
+    """Return macro-level facts (consumption trajectory, reserved capacity, equivalents)."""
+    return _load_macro_facts()
 
 
 @app.get("/health")
@@ -206,9 +231,22 @@ def get_data_center(dc_id: str) -> dict:
     latest = capacity[0] if capacity else None
     mw = (latest or {}).get("mw_current") or (latest or {}).get("mw_planned_max")
     kommune_gwh = float(row["kommune_gwh"]) if row["kommune_gwh"] is not None else None
-    kommune_share_pct = None
+
+    macro = _load_macro_facts()
+    util = macro.get("utilization_band", {})
+    util_low = float(util.get("low_pct", 40)) / 100.0
+    util_high = float(util.get("high_pct", 70)) / 100.0
+
+    kommune_share = None
     if mw is not None and kommune_gwh and kommune_gwh > 0:
-        kommune_share_pct = (mw * 8760.0) / (kommune_gwh * 1000.0) * 100.0
+        upper_bound = (mw * 8760.0) / (kommune_gwh * 1000.0) * 100.0
+        kommune_share = {
+            "upper_bound_pct": upper_bound,
+            "realistic_low_pct": upper_bound * util_low,
+            "realistic_high_pct": upper_bound * util_high,
+            "utilization_low_pct": util.get("low_pct", 40),
+            "utilization_high_pct": util.get("high_pct", 70),
+        }
 
     return {
         "id": row["id"],
@@ -239,5 +277,6 @@ def get_data_center(dc_id: str) -> dict:
         } if row["owner_id"] else None,
         "latest_capacity": latest,
         "capacity_history": capacity,
-        "kommune_share_pct_upper_bound": kommune_share_pct,
+        "kommune_share": kommune_share,
+        "kommune_share_pct_upper_bound": kommune_share["upper_bound_pct"] if kommune_share else None,
     }

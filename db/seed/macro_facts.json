@@ -1,0 +1,58 @@
+{
+  "_comment": "Macro-level facts about Norwegian data centre power consumption, reserved grid capacity and projections. Cited from Nkom, NVE/Statnett, SSB, Stortinget Innst. 140S 2025-2026, Energiteknikk and the April 2026 Datasenter-Norge inventory. Used by the API /macro endpoint and rendered statically on the website.",
+  "_schema_version": 1,
+  "as_of": "2026-04-26",
+  "registry": {
+    "operators_in_nkom_register": 55,
+    "data_centres_in_operation": 104,
+    "registry_date": "2026-03-20",
+    "source_url": "https://nkom.no/datasenter/oversikt"
+  },
+  "consumption_trajectory_twh": [
+    {"year": 2022, "twh": 0.7,  "basis": "NVE / Energiteknikk",                     "confidence": 0.8},
+    {"year": 2023, "twh": 1.6,  "basis": "NVE / Altinget",                          "confidence": 0.85},
+    {"year": 2024, "twh": 2.1,  "basis": "SSB / Digdir, audited (~1.5% of national)", "confidence": 0.95},
+    {"year": 2025, "twh": 2.9,  "basis": "Annualised from NVE 1H 2025 (1.4 TWh, +50% y/y)", "confidence": 0.7, "range_low": 2.8, "range_high": 3.1},
+    {"year": 2026, "twh": 3.0,  "basis": "Trajectory projection plus known additions (AQ-OSL1B/1C, Bulk OS-IX doubling, Polar DRA1, Nscale Glomfjord ramp, Bulk N01 expansion, GM Hamar build-out)", "confidence": 0.55, "range_low": 2.6, "range_high": 3.4}
+  ],
+  "consumption_long_term_projection_twh": [
+    {"year": 2030, "twh": 6,  "basis": "NVE LA25 baseline"},
+    {"year": 2035, "twh": 8,  "basis": "NVE LA25 baseline"},
+    {"year": 2040, "twh": 10, "basis": "NVE LA25 baseline"},
+    {"year": 2050, "twh": 13, "basis": "NVE LA25 baseline"}
+  ],
+  "installed_capacity_mw": {
+    "operational_named_sites_low": 600,
+    "operational_named_sites_high": 700,
+    "comment": "Sum of named operational sites in Table 2A plus an estimated 50-70 MW long-tail captive/crypto operators not separately disclosed. The 501 MW figure repeated in 2024 sources predates AQ Hønefoss B/C, Skygard, Polar DRA1, Bulk OS-IX doubling, Nscale Glomfjord and the 2025 Stack OSL04 expansions and is roughly 18 months stale by April 2026."
+  },
+  "statnett_reservations": {
+    "data_centres_reserved_mw": 3363,
+    "data_centres_mature_queue_mw": 4465,
+    "all_sectors_total_reserved_mw": 8004,
+    "all_sectors_total_queue_mw": 12465,
+    "as_of": "2025-12-04",
+    "share_data_centres_of_reserved_pct": 36,
+    "share_data_centres_of_queue_pct": 50,
+    "source_url": "https://www.stortinget.no/no/Saker-og-publikasjoner/Publikasjoner/Innstillinger/Stortinget/2025-2026/inns-202526-140s/"
+  },
+  "utilization_band": {
+    "low_pct": 40,
+    "high_pct": 70,
+    "comment": "Realised power draw as a fraction of nameplate MW. Used as a band when computing kommune share rather than the 100% upper bound."
+  },
+  "context_equivalents_for_3_twh": [
+    {"label": "Andel av norsk kraftproduksjon (155 TWh)",          "value": "~1.9 %"},
+    {"label": "Sauda kraftverk (årsproduksjon)",                  "value": "~1.5x"},
+    {"label": "Hydro Karmøy aluminiumverk (årsforbruk)",           "value": "~1.5x"},
+    {"label": "Gjennomsnittsboliger (16 000 kWh/år)",              "value": "~187 000"},
+    {"label": "Andel av Oslos årsforbruk (9 TWh)",                 "value": "~33 %"}
+  ],
+  "household_electricity_total_twh_2024": 40.9,
+  "regulatory_milestones": [
+    {"date": "2025-01-01", "label": "Datasenterforskrift under ny Ekomlov i kraft (Nkom-registrering for >0.5 MW)"},
+    {"date": "2025-06",    "label": "Datasenterstrategi 2025 (Datasenternæringa) lansert"},
+    {"date": "2026-01-01", "label": "EU AI Act og MiCA implementeringer trer i kraft"},
+    {"date": "2025-2026",  "label": "Stortinget behandler representantforslag om nasjonalt konsesjonssystem (Innst. 140S)"}
+  ]
+}

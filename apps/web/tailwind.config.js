@@ -4,13 +4,22 @@ export default {
   theme: {
     extend: {
       colors: {
-        ink: "#14181c",
-        paper: "#f7f5f0",
-        accent: "#1ea7a0",
+        ink: "#0e1a2b",
+        "ink-2": "#2a3a52",
+        paper: "#f1ece1",
+        "paper-2": "#e8e2d3",
+        "paper-3": "#fbf8f1",
+        blue: "#1d49c7",
+        "blue-2": "#143198",
+        "blue-3": "#d6dcf2",
+        muted: "#5b6478",
+        "muted-2": "#8a8e98",
+        accent: "#1d49c7",
       },
       fontFamily: {
-        sans: ["IBM Plex Sans", "ui-sans-serif", "system-ui", "sans-serif"],
-        mono: ["IBM Plex Mono", "ui-monospace", "monospace"],
+        sans: ["Instrument Serif", "serif"],
+        serif: ["Instrument Serif", "serif"],
+        mono: ["Instrument Serif", "serif"],
       },
     },
   },
