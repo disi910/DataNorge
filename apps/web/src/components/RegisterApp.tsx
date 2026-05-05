@@ -50,6 +50,13 @@ function shortenOwner(o: string | null): string {
   return o.replace(/\s*\([^)]*\)\s*/g, "").trim();
 }
 
+const STATUS_COLORS = {
+  operational: "#2f7d5b",
+  under_construction: "#d18b1f",
+  planned: "#4a6fa5",
+  decommissioned: "#9aa0a8",
+} as const;
+
 const FONT = "'Helvetica Neue', Helvetica, Arial, sans-serif";
 const INK = "#15171a";
 const PAPER = "#fbfaf7";
@@ -144,14 +151,21 @@ export default function RegisterApp() {
           .includes(Q),
       );
     }
-    if (sort === "mw") arr.sort((a, b) => (b.mw_current ?? 0) - (a.mw_current ?? 0));
-    else if (sort === "name") arr.sort((a, b) => a.name.localeCompare(b.name));
+    if (sort === "mw") {
+      const rank = (s: Row) => {
+        if (s.status === "operational" && (s.mw_current ?? 0) > 0) return 0;
+        if (s.status === "under_construction" && (s.mw_planned_max ?? 0) > 0) return 1;
+        if (s.status === "planned" && (s.mw_planned_max ?? 0) > 0) return 2;
+        return 3;
+      };
+      const mwOf = (s: Row) =>
+        s.status === "operational" ? (s.mw_current ?? 0) : (s.mw_planned_max ?? 0);
+      arr.sort((a, b) => rank(a) - rank(b) || mwOf(b) - mwOf(a));
+    } else if (sort === "name") arr.sort((a, b) => a.name.localeCompare(b.name));
     else if (sort === "region")
       arr.sort((a, b) => a.region.localeCompare(b.region) || (b.mw_current ?? 0) - (a.mw_current ?? 0));
     return arr;
   }, [items, filter, q, sort]);
-
-  const max = useMemo(() => Math.max(...(items ?? []).map((s) => s.mw_current ?? 0), 100), [items]);
 
   const focused = items?.find((s) => s.id === (hoverId ?? selectedId)) ?? null;
 
@@ -279,7 +293,6 @@ export default function RegisterApp() {
                 key={s.id}
                 s={s}
                 rank={String(i + 1).padStart(2, "0")}
-                max={max}
                 selected={selectedId === s.id}
                 onSelect={setSelectedId}
                 onHover={setHoverId}
@@ -319,31 +332,17 @@ export default function RegisterApp() {
           }}
         >
           <span style={{ fontSize: 12, color: MUTED }}>Geografisk fordeling</span>
-          <span style={{ fontSize: 11, color: MUTED_2 }}>
-            <span
-              style={{
-                display: "inline-block",
-                width: 8,
-                height: 8,
-                borderRadius: "50%",
-                background: INK,
-                marginRight: 5,
-                transform: "translateY(1px)",
-              }}
-            />
-            I drift &nbsp;·&nbsp;
-            <span
-              style={{
-                display: "inline-block",
-                width: 8,
-                height: 8,
-                borderRadius: "50%",
-                border: `1px dashed ${INK}`,
-                marginRight: 5,
-                transform: "translateY(1px)",
-              }}
-            />
-            Planlagt &nbsp;·&nbsp; areal = MW
+          <span style={{ fontSize: 11, color: MUTED, display: "inline-flex", alignItems: "center", gap: 4 }}>
+            <Dot color={STATUS_COLORS.operational} />
+            I drift
+            <span style={{ color: MUTED_2, margin: "0 4px" }}>·</span>
+            <Dot color={STATUS_COLORS.under_construction} />
+            Under bygging
+            <span style={{ color: MUTED_2, margin: "0 4px" }}>·</span>
+            <Dot color={STATUS_COLORS.planned} />
+            Planlagt
+            <span style={{ color: MUTED_2, margin: "0 4px" }}>·</span>
+            areal = MW
           </span>
         </div>
 
@@ -362,19 +361,39 @@ export default function RegisterApp() {
                 border: `1px solid ${INK}`,
                 padding: "10px 12px 11px",
                 boxShadow: `2px 2px 0 ${INK}`,
-                pointerEvents: "none",
+                pointerEvents: "auto",
                 zIndex: 10,
               }}
             >
-              <div style={{ fontSize: 11, color: MUTED }}>
-                {focused.region} · {focused.kommune_name ?? "—"} ·{" "}
-                {focused.status === "operational"
-                  ? "I drift"
-                  : focused.status === "under_construction"
-                  ? "Under bygging"
-                  : "Planlagt"}
-              </div>
-              <div style={{ fontSize: 17, fontWeight: 500, marginTop: 3, lineHeight: 1.15 }}>
+              <button
+                onClick={() => {
+                  setSelectedId(null);
+                  setHoverId(null);
+                }}
+                aria-label="Lukk"
+                style={{
+                  position: "absolute",
+                  top: 6,
+                  right: 6,
+                  width: 20,
+                  height: 20,
+                  display: "inline-flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  background: "transparent",
+                  border: 0,
+                  padding: 0,
+                  color: MUTED,
+                  fontSize: 14,
+                  lineHeight: 1,
+                  cursor: "pointer",
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = INK)}
+                onMouseLeave={(e) => (e.currentTarget.style.color = MUTED)}
+              >
+                ✕
+              </button>
+              <div style={{ fontSize: 17, fontWeight: 500, lineHeight: 1.15, paddingRight: 22 }}>
                 {focused.name}
               </div>
               {focused.subtitle && (
@@ -420,7 +439,23 @@ export default function RegisterApp() {
                 <span style={{ fontSize: 11, color: MUTED }}>Eier</span>
                 <span style={{ fontSize: 11 }}>{focused.owner ?? "—"}</span>
                 <span style={{ fontSize: 11, color: MUTED }}>Flagg</span>
-                <span style={{ fontSize: 11 }}>{focused.owner_country ?? "—"}</span>
+                <span style={{ fontSize: 11 }}>
+                  {focused.owner_country ? (
+                    <img
+                      src={`https://flagsapi.com/${focused.owner_country}/flat/64.png`}
+                      alt={focused.owner_country}
+                      width={20}
+                      height={15}
+                      style={{
+                        display: "inline-block",
+                        verticalAlign: "middle",
+                        border: `1px solid ${HAIRLINE}`,
+                      }}
+                    />
+                  ) : (
+                    "—"
+                  )}
+                </span>
               </div>
             </div>
           )}
@@ -447,25 +482,41 @@ export default function RegisterApp() {
   );
 }
 
+function Dot({ color, dashed = false }: { color: string; dashed?: boolean }) {
+  return (
+    <span
+      style={{
+        display: "inline-block",
+        width: 8,
+        height: 8,
+        borderRadius: "50%",
+        background: dashed ? "transparent" : color,
+        border: dashed ? `1px dashed ${color}` : "none",
+        verticalAlign: "middle",
+      }}
+    />
+  );
+}
+
 function SiteRow({
   s,
   rank,
-  max,
   selected,
   onSelect,
   onHover,
 }: {
   s: Row;
   rank: string;
-  max: number;
   selected: boolean;
   onSelect: (id: string) => void;
   onHover: (id: string | null) => void;
 }) {
-  const mw = s.mw_current ?? null;
+  const cur = s.mw_current ?? 0;
   const planned = s.mw_planned_max ?? 0;
-  const isPlanned = mw == null && planned > 0;
-  const barW = mw != null ? (mw / max) * 100 : (planned / max) * 100;
+  const utilized = planned > 0 ? Math.min(100, (cur / planned) * 100) : 0;
+  const planOnly = cur === 0 && planned > 0;
+  const hasAny = cur > 0 || planned > 0;
+  const mw = s.mw_current ?? null;
 
   return (
     <div
@@ -514,19 +565,36 @@ function SiteRow({
       </div>
       <div style={{ fontSize: 11, color: MUTED, textAlign: "center" }}>{s.region}</div>
       <div style={{ position: "relative", height: 8 }}>
-        <div style={{ position: "absolute", left: 0, top: 3, right: 0, height: 1, background: HAIRLINE }} />
-        <div
-          style={{
-            position: "absolute",
-            left: 0,
-            top: 0,
-            height: 7,
-            width: `${Math.min(barW, 100)}%`,
-            background: isPlanned ? "transparent" : INK,
-            border: isPlanned ? `1px dashed ${INK}` : "none",
-            opacity: isPlanned ? 0.55 : 0.85,
-          }}
-        />
+        {hasAny && (
+          <div style={{ position: "absolute", left: 0, top: 3, right: 0, height: 1, background: HAIRLINE }} />
+        )}
+        {planOnly ? (
+          <div
+            style={{
+              position: "absolute",
+              left: 0,
+              top: 0,
+              height: 7,
+              width: "100%",
+              border: `1px dashed ${STATUS_COLORS.planned}`,
+              opacity: 0.55,
+            }}
+          />
+        ) : (
+          utilized > 0 && (
+            <div
+              style={{
+                position: "absolute",
+                left: 0,
+                top: 0,
+                height: 7,
+                width: `${utilized}%`,
+                background: STATUS_COLORS.operational,
+                opacity: 0.9,
+              }}
+            />
+          )
+        )}
       </div>
       <div style={{ display: "flex", alignItems: "baseline", justifyContent: "flex-end", gap: 3 }}>
         {mw != null ? (
