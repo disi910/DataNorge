@@ -14,7 +14,7 @@ const SOURCES = [
 export function SourcesPage() {
   return (
     <div style={{ marginTop: 16, paddingBottom: 40 }}>
-      <div className="h-mono uppercase text-blue" style={{ fontSize: 10.5, letterSpacing: "0.3em" }}>Kilder &amp; rettelser</div>
+      <div className="text-blue" style={{ fontSize: 13, fontStyle: "italic" }}>Kilder &amp; rettelser</div>
       <h2 className="h-serif" style={{ fontSize: 48, fontWeight: 400, lineHeight: 1, margin: "6px 0 18px" }}>
         Vi siterer alt - og <span className="italic text-blue">retter</span> alt.
       </h2>
@@ -25,7 +25,7 @@ export function SourcesPage() {
             className="grid"
             style={{ gridTemplateColumns: "120px 1fr", gap: 14, paddingBottom: 12, borderBottom: "1px solid rgba(14,26,43,0.18)" }}
           >
-            <span className="h-mono uppercase text-blue" style={{ fontSize: 11, letterSpacing: "0.14em" }}>{s.n}</span>
+            <span className="text-blue font-medium" style={{ fontSize: 14 }}>{s.n}</span>
             <span className="h-serif" style={{ fontSize: 13.5, lineHeight: 1.5, color: "#2a3a52" }}>{s.d}</span>
           </div>
         ))}

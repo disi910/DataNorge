@@ -2,7 +2,7 @@ export function MethodPage() {
   return (
     <div className="grid" style={{ marginTop: 16, gridTemplateColumns: "1fr 1fr", gap: 36, paddingBottom: 40 }}>
       <div>
-        <div className="h-mono uppercase text-blue" style={{ fontSize: 10.5, letterSpacing: "0.3em" }}>Metode</div>
+        <div className="text-blue" style={{ fontSize: 13, fontStyle: "italic" }}>Metode</div>
         <h2 className="h-serif" style={{ fontSize: 48, fontWeight: 400, lineHeight: 1, margin: "6px 0 14px" }}>
           Hvordan vi <span className="italic text-blue">regner</span>.
         </h2>
@@ -24,14 +24,14 @@ export function MethodPage() {
             ["< 0,3",   "Kun grovt bånd; ikke brukt i totaler"],
           ] as const).map(([k, v], i) => (
             <div key={i} style={{ display: "contents" }}>
-              <span className="h-mono nums text-blue" style={{ fontSize: 11 }}>{k}</span>
-              <span className="h-sans" style={{ fontSize: 12.5, color: "#2a3a52" }}>{v}</span>
+              <span className="nums text-blue" style={{ fontSize: 13 }}>{k}</span>
+              <span style={{ fontSize: 13, color: "#2a3a52" }}>{v}</span>
             </div>
           ))}
         </div>
       </div>
       <div>
-        <div className="h-mono uppercase text-blue" style={{ fontSize: 10.5, letterSpacing: "0.3em" }}>Forbruk over tid</div>
+        <div className="text-blue" style={{ fontSize: 13, fontStyle: "italic" }}>Forbruk over tid</div>
         <h3 className="h-serif italic" style={{ fontSize: 24, fontWeight: 400, margin: "6px 0 10px" }}>
           Fra 0,7 til 6 TWh på åtte år.
         </h3>
@@ -67,28 +67,28 @@ function Trajectory() {
       {[0, 2, 4, 6, 8, 10, 12, 14].map((v) => (
         <g key={v}>
           <line x1={padL} x2={W - padR} y1={sy(v)} y2={sy(v)} stroke="#0e1a2b" strokeWidth="0.3" opacity="0.18"/>
-          <text x={padL - 6} y={sy(v) + 3} fontSize="8" textAnchor="end" fontFamily="JetBrains Mono, monospace" fill="#5b6478">{v}</text>
+          <text x={padL - 6} y={sy(v) + 3} fontSize="9" textAnchor="end" fontFamily="Instrument Serif, serif" fill="#5b6478">{v}</text>
         </g>
       ))}
       {[2022, 2025, 2030, 2035, 2040, 2050].map((y) => (
         <g key={y}>
           <line x1={sx(y)} x2={sx(y)} y1={padT} y2={H - padB} stroke="#0e1a2b" strokeWidth="0.3" opacity="0.15"/>
-          <text x={sx(y)} y={H - padB + 13} fontSize="8" textAnchor="middle" fontFamily="JetBrains Mono, monospace" fill="#5b6478">{y}</text>
+          <text x={sx(y)} y={H - padB + 13} fontSize="9" textAnchor="middle" fontFamily="Instrument Serif, serif" fill="#5b6478">{y}</text>
         </g>
       ))}
-      <text x={6} y={padT - 4} fontSize="8" fontFamily="JetBrains Mono, monospace" fill="#1d49c7" letterSpacing="0.1em">TWh/ÅR</text>
+      <text x={6} y={padT - 4} fontSize="9" fontFamily="Instrument Serif, serif" fill="#1d49c7">TWh/år</text>
       <path d={path(projected)} fill="none" stroke="#1d49c7" strokeWidth="1.5" strokeDasharray="4 3" opacity="0.7"/>
       <path d={path(actuals)} fill="none" stroke="#0e1a2b" strokeWidth="2"/>
       {data.map((d, i) => (
         <g key={i}>
           <circle cx={sx(d.y)} cy={sy(d.v)} r={d.actual ? 3.5 : 3} fill={d.actual ? "#0e1a2b" : "#1d49c7"} stroke="#f1ece1" strokeWidth="1.4"/>
           {(d.y === 2024 || d.y === 2030 || d.y === 2050) && (
-            <text x={sx(d.y)} y={sy(d.v) - 9} fontSize="9" textAnchor="middle" fontFamily="Fraunces" fontStyle="italic" fill="#0e1a2b">{d.v} TWh</text>
+            <text x={sx(d.y)} y={sy(d.v) - 9} fontSize="10" textAnchor="middle" fontFamily="Instrument Serif, serif" fontStyle="italic" fill="#0e1a2b">{d.v} TWh</text>
           )}
         </g>
       ))}
       <line x1={sx(2025)} x2={sx(2025)} y1={sy(13)} y2={sy(0)} stroke="#1d49c7" strokeWidth="0.4" strokeDasharray="2 3"/>
-      <text x={sx(2025) + 4} y={sy(13) + 8} fontSize="8" fontFamily="JetBrains Mono, monospace" fill="#1d49c7" letterSpacing="0.08em">FAKTISK / PROGNOSE</text>
+      <text x={sx(2025) + 4} y={sy(13) + 8} fontSize="9" fontFamily="Instrument Serif, serif" fontStyle="italic" fill="#1d49c7">Faktisk / prognose</text>
     </svg>
   );
 }

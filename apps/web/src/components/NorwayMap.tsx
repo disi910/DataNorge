@@ -93,7 +93,7 @@ export function NorwayMap({ selectedId, onSelect }: Props) {
     <>
       <div ref={containerRef} style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, width: "100%", height: "100%" }} />
       {!loaded && (
-        <div className="pointer-events-none absolute inset-0 flex items-center justify-center font-mono text-xs uppercase tracking-widest text-ink/60">
+        <div className="pointer-events-none absolute inset-0 flex items-center justify-center text-ink/60" style={{ fontSize: 14, fontStyle: "italic" }}>
           Laster kart…
         </div>
       )}

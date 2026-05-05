@@ -41,7 +41,7 @@ export function OwnershipBars({ items }: { items: DataCenterProps[] }) {
       {data.map((d) => (
         <div key={d.c} style={{ padding: "5px 0", borderBottom: "1px solid rgba(14,26,43,0.08)" }}>
           <div className="flex justify-between items-baseline">
-            <span className="h-sans" style={{ fontSize: 11.5 }}>{d.label}</span>
+            <span className="" style={{ fontSize: 11.5 }}>{d.label}</span>
             <span className="h-serif nums" style={{ fontSize: 13 }}>
               {d.v} <span className="h-mono text-muted" style={{ fontSize: 8.5, letterSpacing: "0.1em" }}>MW</span>
             </span>
@@ -54,8 +54,8 @@ export function OwnershipBars({ items }: { items: DataCenterProps[] }) {
           </div>
         </div>
       ))}
-      <div className="h-mono text-blue" style={{ fontSize: 9.5, marginTop: 8, letterSpacing: "0.12em" }}>
-        UTENLANDSK ANDEL: ~{foreignPct} %
+      <div className="text-blue" style={{ fontSize: 12, marginTop: 8 }}>
+        Utenlandsk andel: ~{foreignPct} %
       </div>
     </div>
   );
@@ -88,7 +88,7 @@ export function StatusTable({ items }: { items: DataCenterProps[] }) {
             borderBottom: "1px solid rgba(14,26,43,0.12)",
           }}
         >
-          <span className="h-mono text-blue font-semibold" style={{ fontSize: 11, letterSpacing: "0.14em" }}>
+          <span className="text-blue font-medium" style={{ fontSize: 13 }}>
             {r.l}
           </span>
           <div>
@@ -100,11 +100,11 @@ export function StatusTable({ items }: { items: DataCenterProps[] }) {
           </div>
           <div className="text-right">
             <div className="h-serif nums" style={{ fontSize: 14 }}>{r.mw}</div>
-            <div className="h-mono text-muted" style={{ fontSize: 8.5, letterSpacing: "0.12em" }}>+{r.plan} plan</div>
+            <div className="text-muted" style={{ fontSize: 11 }}>+{r.plan} plan</div>
           </div>
         </div>
       ))}
-      <div className="h-mono text-muted" style={{ fontSize: 9, padding: "6px 10px", letterSpacing: "0.1em", lineHeight: 1.5 }}>
+      <div className="text-muted" style={{ fontSize: 11, padding: "6px 10px", lineHeight: 1.5 }}>
         ━ drift &nbsp;·&nbsp; <span className="text-blue">━ planlagt</span> &nbsp;·&nbsp; tall i MW
       </div>
     </div>
@@ -122,13 +122,13 @@ export function MapTotalsOverlay({ items }: { items: DataCenterProps[] }) {
       className="absolute"
       style={{ right: 14, top: 14, background: "rgba(241,236,225,0.95)", border: "1px solid #0e1a2b", padding: "8px 12px", textAlign: "right", minWidth: 180, zIndex: 5 }}
     >
-      <div className="h-mono uppercase text-muted" style={{ fontSize: 9, letterSpacing: "0.18em" }}>navngitte i drift</div>
-      <div className="h-serif nums" style={{ fontSize: 26, fontWeight: 400, lineHeight: 1 }}>
+      <div className="text-muted" style={{ fontSize: 11 }}>Navngitte i drift</div>
+      <div className="nums" style={{ fontSize: 26, fontWeight: 400, lineHeight: 1 }}>
         {opMw} <span className="text-blue" style={{ fontSize: 13 }}>MW</span>
       </div>
       <div style={{ height: 1, background: "rgba(14,26,43,0.18)", margin: "6px 0" }}/>
-      <div className="h-mono uppercase text-muted" style={{ fontSize: 9, letterSpacing: "0.18em" }}>annonsert pipeline</div>
-      <div className="h-serif nums text-blue" style={{ fontSize: 26, fontWeight: 400, lineHeight: 1 }}>
+      <div className="text-muted" style={{ fontSize: 11 }}>Annonsert pipeline</div>
+      <div className="nums text-blue" style={{ fontSize: 26, fontWeight: 400, lineHeight: 1 }}>
         +{planMw} <span style={{ fontSize: 13 }}>MW</span>
       </div>
     </div>
@@ -141,16 +141,16 @@ export function MapLegendOverlay() {
       className="absolute"
       style={{ left: 14, bottom: 14, background: "rgba(241,236,225,0.95)", border: "1px solid #0e1a2b", padding: "8px 10px", zIndex: 5 }}
     >
-      <div className="h-mono uppercase" style={{ fontSize: 9, letterSpacing: "0.18em", marginBottom: 6 }}>Tegnforklaring</div>
+      <div style={{ fontSize: 12, marginBottom: 6 }}>Tegnforklaring</div>
       <div className="grid items-center" style={{ gridTemplateColumns: "max-content max-content", gap: "4px 10px" }}>
         <span>
           <svg width="22" height="14"><circle cx="11" cy="7" r="6" fill="#1d49c7" fillOpacity="0.18" stroke="#1d49c7" strokeWidth="1"/><circle cx="11" cy="7" r="1.6" fill="#0e1a2b"/></svg>
         </span>
-        <span className="h-sans" style={{ fontSize: 10.5 }}>I drift - areal = MW</span>
+        <span className="" style={{ fontSize: 10.5 }}>I drift - areal = MW</span>
         <span>
           <svg width="22" height="14"><circle cx="11" cy="7" r="6" fill="none" stroke="#1d49c7" strokeWidth="0.9" strokeDasharray="2 2"/><circle cx="11" cy="7" r="1.4" fill="#1d49c7"/></svg>
         </span>
-        <span className="h-sans" style={{ fontSize: 10.5 }}>Planlagt / under bygging</span>
+        <span className="" style={{ fontSize: 10.5 }}>Planlagt / under bygging</span>
       </div>
     </div>
   );

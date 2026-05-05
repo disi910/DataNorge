@@ -62,7 +62,7 @@ export function DataCenterList({ selectedId, onSelect, onHover, onItemsLoaded }:
   }, [items, filter, q, sort]);
 
   if (error) return <div className="p-4 h-mono text-xs text-red-700">Feil: {error}</div>;
-  if (!items) return <div className="p-4 h-mono text-xs uppercase tracking-widest text-muted">Laster…</div>;
+  if (!items) return <div className="p-4 text-muted" style={{ fontSize: 13 }}>Laster…</div>;
 
   return (
     <div>
@@ -96,7 +96,7 @@ export function DataCenterList({ selectedId, onSelect, onHover, onItemsLoaded }:
               </button>
             ))}
           </div>
-          <span className="h-mono text-muted" style={{ fontSize: 10, letterSpacing: "0.1em" }}>
+          <span className="text-muted" style={{ fontSize: 12 }}>
             {filtered.length}/{items.length}
           </span>
         </div>

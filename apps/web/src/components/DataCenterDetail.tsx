@@ -52,7 +52,7 @@ export function DetailCard({ id }: { id: string | null }) {
   }
   if (!data) {
     return (
-      <div className="h-mono uppercase text-muted" style={{ padding: 14, fontSize: 10, letterSpacing: "0.18em" }}>
+      <div className="text-muted" style={{ padding: 14, fontSize: 13, fontStyle: "italic" }}>
         Laster…
       </div>
     );
@@ -70,7 +70,7 @@ export function DetailCard({ id }: { id: string | null }) {
 
   return (
     <div className="relative" style={{ padding: 14, border: "1px solid #0e1a2b", background: "#fbf8f1" }}>
-      <div className="h-mono text-blue" style={{ fontSize: 9.5, letterSpacing: "0.18em" }}>
+      <div className="text-blue" style={{ fontSize: 12, fontStyle: "italic" }}>
         {isOper ? "I drift" : s.status === "under_construction" ? "Under bygging" : "Planlagt"}
       </div>
       <div className="h-serif" style={{ fontSize: 22, fontWeight: 500, marginTop: 4, lineHeight: 1.1 }}>{s.name}</div>

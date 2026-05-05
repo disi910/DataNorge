@@ -61,8 +61,8 @@ export default function App() {
       {tab === "kilder" && <SourcesPage/>}
 
       <div
-        className="flex justify-between h-mono uppercase text-muted"
-        style={{ marginTop: 28, paddingTop: 14, borderTop: "1px solid #0e1a2b", fontSize: 9.5, letterSpacing: "0.16em" }}
+        className="flex justify-between text-muted"
+        style={{ marginTop: 28, paddingTop: 14, borderTop: "1px solid #0e1a2b", fontSize: 12 }}
       >
         <span>Kilder: Nkom · NVE · Statnett · SSB · BRREG · Kartverket</span>
         <span>Sist verifisert 25.04.2026</span>

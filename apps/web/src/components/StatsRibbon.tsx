@@ -19,10 +19,10 @@ export function StatsRibbon() {
           <div className="h-serif nums" style={{ fontSize: 32, fontWeight: 400, lineHeight: 1, letterSpacing: "-0.01em" }}>
             {s.k}
           </div>
-          <div className="h-mono uppercase text-blue" style={{ fontSize: 9.5, letterSpacing: "0.18em", marginTop: 5 }}>
+          <div className="text-blue" style={{ fontSize: 12, marginTop: 5 }}>
             {s.u}
           </div>
-          <div className="h-sans text-muted" style={{ fontSize: 10.5, marginTop: 4, lineHeight: 1.35 }}>
+          <div className="text-muted" style={{ fontSize: 11, marginTop: 4, lineHeight: 1.35 }}>
             {s.foot}
           </div>
         </div>

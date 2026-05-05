@@ -17,9 +17,9 @@ export default {
         accent: "#1d49c7",
       },
       fontFamily: {
-        sans: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"],
-        serif: ["Fraunces", "IBM Plex Serif", "serif"],
-        mono: ["JetBrains Mono", "IBM Plex Mono", "ui-monospace", "monospace"],
+        sans: ["Instrument Serif", "serif"],
+        serif: ["Instrument Serif", "serif"],
+        mono: ["Instrument Serif", "serif"],
       },
     },
   },
