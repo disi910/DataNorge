@@ -6,6 +6,16 @@ Format: `### YYYY-MM-DD — short title` then bullets. Mark milestones with **M0
 
 ---
 
+### 2026-05-05 — Register UI + polish pass
+
+- Replaced the multi-tab editorial landing with a single `RegisterApp` page that fills the viewport and never scrolls (only the list does). Two-column grid: searchable + filterable + sortable list (58 sites) on the left, MapLibre map on the right, paper-card flyout for the focused site.
+- Map markers re-coloured by status: `operational #2f7d5b` / `under_construction #d18b1f` / `planned #4a6fa5` / `decommissioned #9aa0a8`. Inline legend in the map header now shows all three live statuses.
+- List capacity bars now encode utilization-of-build-out (`mw_current / mw_planned_max`), not absolute MW. Planned-only sites get a dashed slate outline. MW sort groups by status priority (operational → under_construction → planned → no-capacity), descending within each group.
+- Detail card: dropped the redundant region·kommune·status strap, added an X close button, and replaced the country letter code with a flag PNG via `flagsapi.com/{CC}/flat/64.png`.
+- Repo housekeeping: added MIT `LICENSE`, refreshed root and per-app READMEs to match shipped reality, set GitHub repo topics.
+
+---
+
 ### 2026-04-24 — M1 first real data on the map
 
 - All 357 Norwegian kommune polygons loaded from `robhop/fylker-og-kommuner` (CC BY 4.0, Kartverket-derived). Verified Kautokeino largest at 9707 km².
