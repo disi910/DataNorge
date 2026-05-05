@@ -139,18 +139,22 @@ export function MapLegendOverlay() {
   return (
     <div
       className="absolute"
-      style={{ left: 14, bottom: 14, background: "rgba(241,236,225,0.95)", border: "1px solid #0e1a2b", padding: "8px 10px", zIndex: 5 }}
+      style={{ left: 14, bottom: 14, background: "rgba(251,250,247,0.95)", border: "1px solid #15171a", padding: "8px 10px", zIndex: 5 }}
     >
       <div style={{ fontSize: 12, marginBottom: 6 }}>Tegnforklaring</div>
       <div className="grid items-center" style={{ gridTemplateColumns: "max-content max-content", gap: "4px 10px" }}>
         <span>
-          <svg width="22" height="14"><circle cx="11" cy="7" r="6" fill="#1d49c7" fillOpacity="0.18" stroke="#1d49c7" strokeWidth="1"/><circle cx="11" cy="7" r="1.6" fill="#0e1a2b"/></svg>
+          <svg width="22" height="14"><circle cx="11" cy="7" r="6" fill="#15171a" fillOpacity="0.85" stroke="#15171a" strokeWidth="1"/></svg>
         </span>
-        <span className="" style={{ fontSize: 10.5 }}>I drift - areal = MW</span>
+        <span style={{ fontSize: 10.5 }}>I drift · areal = MW</span>
         <span>
-          <svg width="22" height="14"><circle cx="11" cy="7" r="6" fill="none" stroke="#1d49c7" strokeWidth="0.9" strokeDasharray="2 2"/><circle cx="11" cy="7" r="1.4" fill="#1d49c7"/></svg>
+          <svg width="22" height="14"><circle cx="11" cy="7" r="6" fill="#6c6f76" fillOpacity="0.85" stroke="#15171a" strokeWidth="1"/></svg>
         </span>
-        <span className="" style={{ fontSize: 10.5 }}>Planlagt / under bygging</span>
+        <span style={{ fontSize: 10.5 }}>Under bygging</span>
+        <span>
+          <svg width="22" height="14"><circle cx="11" cy="7" r="6" fill="#a4a7ad" fillOpacity="0.85" stroke="#15171a" strokeWidth="1"/></svg>
+        </span>
+        <span style={{ fontSize: 10.5 }}>Planlagt</span>
       </div>
     </div>
   );
