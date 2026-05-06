@@ -15,13 +15,13 @@ type Row = DataCenterProps & {
 };
 
 const FILTERS: { k: Filter; l: string }[] = [
-  { k: "all", l: "alle" },
-  { k: "oper", l: "i drift" },
-  { k: "plan", l: "plan" },
-  { k: "hyper", l: "hyper" },
-  { k: "ai", l: "ai" },
-  { k: "colo", l: "colo" },
-  { k: "krypto", l: "krypto" },
+  { k: "all", l: "Alle" },
+  { k: "oper", l: "I drift" },
+  { k: "plan", l: "Plan" },
+  { k: "hyper", l: "Hyper" },
+  { k: "ai", l: "AI" },
+  { k: "colo", l: "Colo" },
+  { k: "krypto", l: "Krypto" },
 ];
 
 const HYPER_NEEDLES = ["microsoft", "google", "meta", "amazon", "azure", "aws", "alphabet", "bytedance", "tiktok"];
@@ -87,14 +87,14 @@ const REG_CSS = `
   .reg-tab.on { background: ${INK}; color: ${PAPER}; border-color: ${INK}; }
   .reg-search {
     width: 100%;
-    border: 0;
-    border-bottom: 1px solid ${INK};
-    background: transparent;
-    padding: 5px 0 5px 20px;
+    border: 1px solid ${HAIRLINE};
+    background: ${PAPER_3};
+    padding: 7px 10px 7px 26px;
     font: 12px/1.2 ${FONT};
     color: ${INK};
     outline: none;
   }
+  .reg-search:focus { border-color: ${INK}; }
   .reg-search::placeholder { color: ${MUTED_2}; }
   .reg-scroll { overflow-y: auto; scrollbar-width: thin; scrollbar-color: rgba(21,23,26,0.18) transparent; }
   .reg-scroll::-webkit-scrollbar { width: 6px; }
@@ -224,7 +224,7 @@ export default function RegisterApp() {
           }}
         >
           <div style={{ position: "relative" }}>
-            <span style={{ position: "absolute", left: 1, top: 6, fontSize: 12, color: MUTED_2 }}>⌕</span>
+            <span style={{ position: "absolute", left: 9, top: 8, fontSize: 12, color: MUTED_2, pointerEvents: "none" }}>⌕</span>
             <input
               className="reg-search"
               placeholder="Søk navn, kommune, eier…"
@@ -332,17 +332,10 @@ export default function RegisterApp() {
           }}
         >
           <span style={{ fontSize: 12, color: MUTED }}>Geografisk fordeling</span>
-          <span style={{ fontSize: 11, color: MUTED, display: "inline-flex", alignItems: "center", gap: 4 }}>
-            <Dot color={STATUS_COLORS.operational} />
-            I drift
-            <span style={{ color: MUTED_2, margin: "0 4px" }}>·</span>
-            <Dot color={STATUS_COLORS.under_construction} />
-            Under bygging
-            <span style={{ color: MUTED_2, margin: "0 4px" }}>·</span>
-            <Dot color={STATUS_COLORS.planned} />
-            Planlagt
-            <span style={{ color: MUTED_2, margin: "0 4px" }}>·</span>
-            areal = MW
+          <span style={{ fontSize: 11, color: MUTED, display: "inline-flex", alignItems: "center", gap: 14 }}>
+            <span style={{ color: STATUS_COLORS.operational }}>I drift</span>
+            <span style={{ color: STATUS_COLORS.under_construction }}>Under bygging</span>
+            <span style={{ color: STATUS_COLORS.planned }}>Planlagt</span>
           </span>
         </div>
 
@@ -446,11 +439,7 @@ export default function RegisterApp() {
                       alt={focused.owner_country}
                       width={20}
                       height={15}
-                      style={{
-                        display: "inline-block",
-                        verticalAlign: "middle",
-                        border: `1px solid ${HAIRLINE}`,
-                      }}
+                      style={{ display: "inline-block", verticalAlign: "middle" }}
                     />
                   ) : (
                     "—"
@@ -474,27 +463,11 @@ export default function RegisterApp() {
           color: MUTED,
         }}
       >
-        <span>Datasenter-Norge · åpen data CC BY 4.0</span>
-        <span>Kilder: Nkom · NVE · Statnett · SSB · BRREG · Kartverket</span>
+        <span>Datasenter-Norge, åpen data CC BY 4.0</span>
+        <span>Kilder: Nkom, NVE, Statnett, SSB, BRREG, Kartverket</span>
         <span>Register 2026/04</span>
       </footer>
     </div>
-  );
-}
-
-function Dot({ color, dashed = false }: { color: string; dashed?: boolean }) {
-  return (
-    <span
-      style={{
-        display: "inline-block",
-        width: 8,
-        height: 8,
-        borderRadius: "50%",
-        background: dashed ? "transparent" : color,
-        border: dashed ? `1px dashed ${color}` : "none",
-        verticalAlign: "middle",
-      }}
-    />
   );
 }
 
@@ -560,7 +533,7 @@ function SiteRow({
             textOverflow: "ellipsis",
           }}
         >
-          {s.kommune_name ?? "—"} · {s.ownerShort}
+          {s.kommune_name ?? "—"}, {s.ownerShort}
         </div>
       </div>
       <div style={{ fontSize: 11, color: MUTED, textAlign: "center" }}>{s.region}</div>
