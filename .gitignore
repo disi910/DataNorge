@@ -37,3 +37,6 @@ db/data/
 # Logs
 *.log
 logs/
+
+# TypeScript incremental build cache
+*.tsbuildinfo
